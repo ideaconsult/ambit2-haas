@@ -1,0 +1,22 @@
+[ {
+	"id": "mockup",
+	"name": "Sleeps for 'delay' milliseconds, returns 'dataset_uri' or 'model_uri', specified on input. For testing purposes",
+	"class": null,
+	"inputparam": null,
+	"type": ["http://www.opentox.org/algorithmTypes.owl#Mockup"],
+	"endpoint": null,
+	"requires": null,
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#mockup"
+},
+ {
+	"id": "haasexample",
+	"name": "Launches example job on Salomon. For testing purposes",
+	"class": null,
+	"inputparam": null,
+	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
+	"endpoint": null,
+	"requires": null,
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
+}
+
+]
