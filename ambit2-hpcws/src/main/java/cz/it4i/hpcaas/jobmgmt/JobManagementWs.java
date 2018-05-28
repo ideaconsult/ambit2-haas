@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "JobManagementWs", targetNamespace = "http://hpcaas.it4i.cz/", wsdlLocation = "https://haas.it4i.cz/test/JobManagementWs.asmx?WSDL")
+@WebServiceClient(name = "JobManagementWs", targetNamespace = "http://hpcaas.it4i.cz/", wsdlLocation = "https://haas.it4i.cz/HaasWsExcape/JobManagementWs.asmx?WSDL")
 public class JobManagementWs
     extends Service
 {
@@ -30,7 +30,7 @@ public class JobManagementWs
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("https://haas.it4i.cz/test/JobManagementWs.asmx?WSDL");
+            url = new URL("https://haas.it4i.cz/HaasWsExcape/JobManagementWs.asmx?WSDL");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
@@ -82,6 +82,28 @@ public class JobManagementWs
     @WebEndpoint(name = "JobManagementWsSoap")
     public JobManagementWsSoap getJobManagementWsSoap(WebServiceFeature... features) {
         return super.getPort(new QName("http://hpcaas.it4i.cz/", "JobManagementWsSoap"), JobManagementWsSoap.class, features);
+    }
+
+    /**
+     * 
+     * @return
+     *     returns JobManagementWsSoap
+     */
+    @WebEndpoint(name = "JobManagementWsSoap12")
+    public JobManagementWsSoap getJobManagementWsSoap12() {
+        return super.getPort(new QName("http://hpcaas.it4i.cz/", "JobManagementWsSoap12"), JobManagementWsSoap.class);
+    }
+
+    /**
+     * 
+     * @param features
+     *     A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
+     * @return
+     *     returns JobManagementWsSoap
+     */
+    @WebEndpoint(name = "JobManagementWsSoap12")
+    public JobManagementWsSoap getJobManagementWsSoap12(WebServiceFeature... features) {
+        return super.getPort(new QName("http://hpcaas.it4i.cz/", "JobManagementWsSoap12"), JobManagementWsSoap.class, features);
     }
 
     private static URL __getWsdlLocation() {

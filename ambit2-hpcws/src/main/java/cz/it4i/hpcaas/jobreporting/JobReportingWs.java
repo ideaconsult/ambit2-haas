@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "JobReportingWs", targetNamespace = "http://hpcaas.it4i.cz/", wsdlLocation = "https://haas.it4i.cz/test/JobReportingWs.asmx?WSDL")
+@WebServiceClient(name = "JobReportingWs", targetNamespace = "http://hpcaas.it4i.cz/", wsdlLocation = "https://haas.it4i.cz/HaasWsExcape/JobReportingWs.asmx?WSDL")
 public class JobReportingWs
     extends Service
 {
@@ -30,7 +30,7 @@ public class JobReportingWs
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("https://haas.it4i.cz/test/JobReportingWs.asmx?WSDL");
+            url = new URL("https://haas.it4i.cz/HaasWsExcape/JobReportingWs.asmx?WSDL");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
@@ -82,6 +82,28 @@ public class JobReportingWs
     @WebEndpoint(name = "JobReportingWsSoap")
     public JobReportingWsSoap getJobReportingWsSoap(WebServiceFeature... features) {
         return super.getPort(new QName("http://hpcaas.it4i.cz/", "JobReportingWsSoap"), JobReportingWsSoap.class, features);
+    }
+
+    /**
+     * 
+     * @return
+     *     returns JobReportingWsSoap
+     */
+    @WebEndpoint(name = "JobReportingWsSoap12")
+    public JobReportingWsSoap getJobReportingWsSoap12() {
+        return super.getPort(new QName("http://hpcaas.it4i.cz/", "JobReportingWsSoap12"), JobReportingWsSoap.class);
+    }
+
+    /**
+     * 
+     * @param features
+     *     A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
+     * @return
+     *     returns JobReportingWsSoap
+     */
+    @WebEndpoint(name = "JobReportingWsSoap12")
+    public JobReportingWsSoap getJobReportingWsSoap12(WebServiceFeature... features) {
+        return super.getPort(new QName("http://hpcaas.it4i.cz/", "JobReportingWsSoap12"), JobReportingWsSoap.class, features);
     }
 
     private static URL __getWsdlLocation() {

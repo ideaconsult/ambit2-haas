@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "ClusterInformationWs", targetNamespace = "http://hpcaas.it4i.cz/", wsdlLocation = "https://haas.it4i.cz/test/ClusterInformationWs.asmx?WSDL")
+@WebServiceClient(name = "ClusterInformationWs", targetNamespace = "http://hpcaas.it4i.cz/", wsdlLocation = "https://haas.it4i.cz/HaasWsExcape/ClusterInformationWs.asmx?WSDL")
 public class ClusterInformationWs
     extends Service
 {
@@ -30,7 +30,7 @@ public class ClusterInformationWs
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("https://haas.it4i.cz/test/ClusterInformationWs.asmx?WSDL");
+            url = new URL("https://haas.it4i.cz/HaasWsExcape/ClusterInformationWs.asmx?WSDL");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
@@ -82,6 +82,28 @@ public class ClusterInformationWs
     @WebEndpoint(name = "ClusterInformationWsSoap")
     public ClusterInformationWsSoap getClusterInformationWsSoap(WebServiceFeature... features) {
         return super.getPort(new QName("http://hpcaas.it4i.cz/", "ClusterInformationWsSoap"), ClusterInformationWsSoap.class, features);
+    }
+
+    /**
+     * 
+     * @return
+     *     returns ClusterInformationWsSoap
+     */
+    @WebEndpoint(name = "ClusterInformationWsSoap12")
+    public ClusterInformationWsSoap getClusterInformationWsSoap12() {
+        return super.getPort(new QName("http://hpcaas.it4i.cz/", "ClusterInformationWsSoap12"), ClusterInformationWsSoap.class);
+    }
+
+    /**
+     * 
+     * @param features
+     *     A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
+     * @return
+     *     returns ClusterInformationWsSoap
+     */
+    @WebEndpoint(name = "ClusterInformationWsSoap12")
+    public ClusterInformationWsSoap getClusterInformationWsSoap12(WebServiceFeature... features) {
+        return super.getPort(new QName("http://hpcaas.it4i.cz/", "ClusterInformationWsSoap12"), ClusterInformationWsSoap.class, features);
     }
 
     private static URL __getWsdlLocation() {
