@@ -17,6 +17,16 @@
 	"endpoint": null,
 	"requires": null,
 	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
+},
+ {
+	"id": "haasexnet",
+	"name": "Launches Exnet model building on Salomon using ExCAPEDBv5 data",
+	"class": null,
+	"inputparam": null,
+	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
+	"endpoint": null,
+	"requires": null,
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
 }
 
 ]

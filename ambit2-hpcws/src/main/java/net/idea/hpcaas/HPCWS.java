@@ -59,7 +59,7 @@ public class HPCWS {
 		
 		hpcws.AuthenticateUserPassword();
 		File inputFile = new File("test_haas.txt");
-		JobSpecificationExt testJob = hpcws.CreateJob(1L,"TestJob","ExpTests",inputFile);
+		JobSpecificationExt testJob = hpcws.CreateJobExample("TestJob", inputFile);
 		SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob,inputFile);
 		System.out.println(String.format("Submitted job ID %s.", submittedTestJob.getId()));
 		SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, 30000);
@@ -78,10 +78,13 @@ public class HPCWS {
 
 	}
 
-	public JobSpecificationExt CreateJob(String taskname) {
-		return CreateJob(1L,taskname, "ExpTests", new File("test_haas.txt"));
+	public JobSpecificationExt CreateJobExample(String taskname,File inputFile) {
+		return CreateJob(1L,taskname, "ExpTests", inputFile);
 	}
 
+	public JobSpecificationExt CreateJobExnetBuild(String taskname, File inputFile) {
+		return CreateJob(2L,taskname, "ExpTests", inputFile);
+	}
 	public JobSpecificationExt CreateJob(long commandTemplateID, String taskname, String project, File inputfile) {
 		// each submitted job must contain at least one task
 		TaskSpecificationExt testTask = new TaskSpecificationExt();
@@ -94,7 +97,7 @@ public class HPCWS {
 		testTask.setStandardErrorFile("console_Stderr");
 		testTask.setProgressFile("console_Stdprog");
 		testTask.setLogFile("console_Stdlog");
-		testTask.setCommandTemplateId(1L); // commandTemplateID
+		testTask.setCommandTemplateId(commandTemplateID); // commandTemplateID
 		// custom environment variables for the task
 		// testTask.setEnvironmentVariables(new EnvironmentVariableExt[0]);
 		// fill the command template parameters (see Table1 for “inputParam”)

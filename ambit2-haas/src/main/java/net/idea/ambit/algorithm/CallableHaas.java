@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.restlet.data.Form;
 import org.restlet.data.Status;
@@ -23,12 +24,14 @@ import net.idea.hpcaas.HPCWS;
 import net.idea.modbcum.i.IQueryRetrieval;
 
 public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
-	protected long delay;
+
 	protected Exception error;
 	protected UUID uuid;
 	protected ModelQueryResults model;
 	protected ModelURIReporter<IQueryRetrieval<ModelQueryResults>> modelReporter;
 	protected AlgorithmURIReporter algReporter;
+	protected Algorithm algorithm;
+	protected long delay;
 
 	public UUID getUuid() {
 		return uuid;
@@ -42,12 +45,12 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			ModelURIReporter<IQueryRetrieval<ModelQueryResults>> modelReporter, AlgorithmURIReporter algReporter,
 			USERID token) {
 		super(token);
+		this.algorithm = algorithm;
 		try {
 			this.delay = Long.parseLong(OpenTox.params.delay.getFirstValue(form).toString());
 		} catch (Exception x) {
 			this.delay = 30000;
 		}
-
 		model = new ModelQueryResults();
 		model.setAlgorithm(algorithm.getName());
 		try {
@@ -75,11 +78,21 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		HPCWS hpcws = new HPCWS();
 		hpcws.AuthenticateUserPassword();
 		Thread.yield();
-		File inputFile = new File("test_haas.txt");
-		JobSpecificationExt testJob = hpcws.CreateJob(1L, model.getName(), "ExpTests", inputFile);
+
+		JobSpecificationExt testJob = null;
+		File inputFile = null;
+		if ("haasexample" == algorithm.getId()) {
+			inputFile = new File("test_haas.txt");
+			testJob = hpcws.CreateJob(1L, model.getName(), "ExpTests", inputFile);
+		} else if ("haasexnet" == algorithm.getId()) {
+			inputFile = new File(this.getClass().getClassLoader().getResource("ambit2/rest/config/config.json").toURI());
+			testJob = hpcws.CreateJob(2L, model.getName(), "ExpTests", inputFile);
+		} else
+			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+
 		SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob, inputFile);
 
-		System.out.println(String.format("Submitted job ID %s.", submittedTestJob.getId()));
+		logger.log(Level.INFO,String.format("Submitted job ID %s.", submittedTestJob.getId()));
 		try {
 			SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, delay);
 
@@ -93,7 +106,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 					String uri = modelReporter.getURI(model);
 					return new TaskResult(uri);
 				} catch (Exception x) {
-					
+
 				}
 				return new TaskResult(file.toString());
 			}
@@ -111,7 +124,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			}
 			}
 		} catch (Exception x) {
-			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,x.getMessage());
+			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY, x.getMessage());
 
 		}
 

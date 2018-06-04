@@ -1,0 +1,33 @@
+{
+	"learning_rate_list": [
+		0.1
+	],
+	"momentum_list": [
+		0.4
+	],
+	"network_layout_list": [
+		[
+			2048,
+			2048
+		]
+	],
+	"dropout_keep_rate_list": [
+		1.0
+	],
+	"input_dropout_keep_rate_list": [
+		1.0
+	],
+	"affinity_level_list": [
+		6
+	],
+	"sample_index_list": [
+		1
+	],
+	"outer_fold_index_list": [
+		1
+	],
+	"inner_fold_index_list": [
+		1
+	],
+	"max_epochs": 1
+}
