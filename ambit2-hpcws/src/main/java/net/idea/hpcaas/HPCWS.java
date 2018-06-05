@@ -153,8 +153,9 @@ public class HPCWS {
 		// 		 instead of just ignoring the issue.
 		//if (inputfile != null && inputfile.exists())
 		try (SSHClient ssh = new SSHClient()) {
-			String filename = p.getProperty("haas.knownhosts");
-			ssh.loadKnownHosts(new File(filename));
+			// TODO: MD5 fingerprints are insecure. Best to import the server's
+			// public key as already implemented in the Python Jupyter notebook.
+			ssh.addHostKeyVerifier("70:01:c9:9a:5d:88:91:c7:1b:c0:84:d1:fa:4e:83:5c");
 			ssh.connect(ft.getServerHostname());
 				ssh.authPublickey(ft.getCredentials().getUsername(), privatekey.getAbsolutePath());
 				ssh.newSCPFileTransfer().upload(inputfile.getAbsolutePath(), ft.getSharedBasepath());
@@ -300,9 +301,9 @@ public class HPCWS {
 			File privatekey = storeMetadata(ft2, tempDirJob);
 
 			try (SSHClient ssh = new SSHClient()) {
-				String filename = p.getProperty("haas.knownhosts");
-
-				ssh.loadKnownHosts(new File(filename));
+				// TODO: MD5 fingerprints are insecure. Best to import the server's
+				// public key as already implemented in the Python Jupyter notebook.
+				ssh.addHostKeyVerifier("70:01:c9:9a:5d:88:91:c7:1b:c0:84:d1:fa:4e:83:5c");
 				ssh.connect(ft2.getServerHostname());
 				ssh.authPublickey(ft2.getCredentials().getUsername(), privatekey.getAbsolutePath());
 
