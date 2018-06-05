@@ -85,7 +85,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			inputFile = new File("test_haas.txt");
 			testJob = hpcws.CreateJob(1L, model.getName(), "ExpTests", inputFile);
 		} else if ("haasexnet" == algorithm.getId()) {
-			inputFile = new File(this.getClass().getClassLoader().getResource("ambit2/rest/config/config.json").toURI());
+			inputFile = new File(this.getClass().getClassLoader().getResource("haas/examples/config.json").toURI());
 			testJob = hpcws.CreateJob(2L, model.getName(), "ExpTests", inputFile);
 		} else
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
