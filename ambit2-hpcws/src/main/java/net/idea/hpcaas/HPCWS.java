@@ -89,35 +89,40 @@ public class HPCWS {
 		// each submitted job must contain at least one task
 		TaskSpecificationExt testTask = new TaskSpecificationExt();
 		testTask.setName(taskname);
-		testTask.setMinCores(1); // minimum number of cores required
-		testTask.setMaxCores(1); // maximum number of cores required
-		testTask.setWalltimeLimit(600); // maximum time for task to run
+		testTask.setMinCores(24); // minimum number of cores required
+		testTask.setMaxCores(24); // maximum number of cores required
+		testTask.setWalltimeLimit(3600); // maximum time for task to run
 										// (seconds)
-		testTask.setStandardOutputFile("console_Stdout");
-		testTask.setStandardErrorFile("console_Stderr");
-		testTask.setProgressFile("console_Stdprog");
-		testTask.setLogFile("console_Stdlog");
+		testTask.setStandardOutputFile("stdout.txt");
+		testTask.setStandardErrorFile("stderr.txt");
+		testTask.setProgressFile("progress.txt");
+		testTask.setLogFile("log.txt");
 		testTask.setCommandTemplateId(commandTemplateID); // commandTemplateID
 		// custom environment variables for the task
 		// testTask.setEnvironmentVariables(new EnvironmentVariableExt[0]);
 		// fill the command template parameters (see Table1 for “inputParam”)
 		ArrayOfCommandTemplateParameterValueExt a = new ArrayOfCommandTemplateParameterValueExt();
 		CommandTemplateParameterValueExt pv = new CommandTemplateParameterValueExt();
-		pv.setCommandParameterIdentifier("inputParam");
-		pv.setParameterValue("someStringParam");
+		pv.setCommandParameterIdentifier("configFile");
+		pv.setParameterValue("config.json");
 		a.getCommandTemplateParameterValueExt().add(pv);
 		testTask.setTemplateParameterValues(a);
+		testTask.setClusterTaskSubdirectory(null);
+		testTask.setIsExclusive(null);
+		testTask.setIsRerunnable(null);
+		testTask.setRequiredNodes(null);
+		testTask.setStandardInputFile(null);
 
 		// create job specification with the task above
 		JobSpecificationExt testJob = new JobSpecificationExt();
 		testJob.setName(taskname); // job name
-		testJob.setMinCores(1); // minimum number of cores required
-		testJob.setMaxCores(1); // maximum number of cores required
+		testJob.setMinCores(24); // minimum number of cores required
+		testJob.setMaxCores(24); // maximum number of cores required
 		testJob.setPriority(JobPriorityExt.AVERAGE);
-		testJob.setProject("ExpTests"); // accounting project
+		testJob.setProject(project); // accounting project
 		testJob.setWaitingLimit(null); // limit for the waiting time in cluster
 										// queue
-		testJob.setWalltimeLimit(600); // maximum time for job to run (seconds)
+		testJob.setWalltimeLimit(3600); // maximum time for job to run (seconds)
 		testJob.setClusterNodeTypeId(7L); // Salomon express queue (1h limit)
 		// custom environment variables for the job
 		// testJob.environmentVariables = new EnvironmentVariableExt[0];
@@ -125,6 +130,11 @@ public class HPCWS {
 		ArrayOfTaskSpecificationExt tasks = new ArrayOfTaskSpecificationExt();
 		tasks.getTaskSpecificationExt().add(testTask);
 		testJob.setTasks(tasks);
+		testJob.setNotificationEmail("some.email@mail.com");
+		testJob.setNotifyOnAbort(false);
+		testJob.setNotifyOnFinish(false);
+		testJob.setNotifyOnStart(false);
+		testJob.setPhoneNumber("000111222");
 		return testJob;
 	}
 
