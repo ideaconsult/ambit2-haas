@@ -61,7 +61,7 @@ public class HPCWS {
 		File inputFile = new File("test_haas.txt");
 		JobSpecificationExt testJob = hpcws.CreateJobExample("TestJob", inputFile);
 		SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob,inputFile);
-		System.out.println(String.format("Submitted job ID %s.", submittedTestJob.getId()));
+		System.out.println(String.format("\nSubmitted job ID %s.\n", submittedTestJob.getId()));
 		SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, 30000);
 		File tempDirJob = hpcws.process(job);
 		System.out.println(tempDirJob);
@@ -72,7 +72,7 @@ public class HPCWS {
 		PasswordCredentialsExt credentials = new PasswordCredentialsExt();
 		credentials.setUsername(p.getProperty("haas.user"));
 		credentials.setPassword(p.getProperty("haas.pwd"));
-		System.out.println(String.format("Authenticating user [%s]...", credentials.getUsername()));
+		System.out.println(String.format("\nAuthenticating user [%s]...\n", credentials.getUsername()));
 		sessionCode = wsUserAndLimitationManagement.getUserAndLimitationManagementWsSoap()
 				.authenticateUserPassword(credentials);
 
@@ -141,7 +141,7 @@ public class HPCWS {
 	public SubmittedJobInfoExt SubmitJob(JobSpecificationExt testJob, File inputfile) {
 		// create job
 		SubmittedJobInfoExt submittedTestJob = wsJobManagement.getJobManagementWsSoap().createJob(testJob, sessionCode);
-		System.out.println(String.format("Created job ID %s.", submittedTestJob.getId()));
+		System.out.println(String.format("\nCreated job ID %s.\n", submittedTestJob.getId()));
 
 		// upload input files
 		FileTransferMethodExt ft = wsFileTransfer.getFileTransferWsSoap()
@@ -182,7 +182,7 @@ public class HPCWS {
 				Thread.sleep(delay);
 				// get info for the job
 				submittedJob = checkstatus(jobId);
-				System.out.println(String.format("Submitted job state %s.", submittedJob.getState()));
+				System.out.println(String.format("\nSubmitted job state %s.\n", submittedJob.getState()));
 				if (submittedJob.getState() == JobStateExt.SUBMITTED
 						|| submittedJob.getState() == JobStateExt.CONFIGURING
 						|| submittedJob.getState() == JobStateExt.QUEUED
