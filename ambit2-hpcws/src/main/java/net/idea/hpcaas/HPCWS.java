@@ -290,7 +290,6 @@ public class HPCWS {
 	}
 
 	public File process(SubmittedJobInfoExt submittedJob) {
-		File tempDir = getTempDir();
 		File tempDirJob = getTempDir(submittedJob.getId());
 		tempDirJob.mkdirs();
 		// job finished successfully, download result files from the cluster
@@ -312,12 +311,13 @@ public class HPCWS {
 				ssh.connect(ft2.getServerHostname());
 				ssh.authPublickey(ft2.getCredentials().getUsername(), privatekey.getAbsolutePath());
 
-				ssh.newSCPFileTransfer().download(ft2.getSharedBasepath(), new FileSystemFile(tempDir));
+				FileSystemFile destDir = new FileSystemFile(tempDirJob);
+
 				for (String changedFile : changedFiles) {
 					try {
 						ssh.newSCPFileTransfer().download(
 								ft2.getSharedBasepath() + "/" + changedFile,
-								new FileSystemFile(tempDir));
+								destDir);
 						System.out.println("File" + changedFile + " downloaded.");
 					} catch (IOException x) {
 						x.printStackTrace();
