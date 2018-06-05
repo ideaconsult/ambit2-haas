@@ -30,7 +30,7 @@ public class AlgorithmResourceHaas extends AlgorithmListResource {
 			return new CallableMockup(form, token);
 			
 		} else if (algorithm.hasType(AlgorithmType.ExternalModels)) {
-			return new CallableHaas( form,algorithm, modelReporter, algReporter, token);
+			return new CallableHaas(form, algorithm, modelReporter, algReporter, token);
 		} 
 		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 	}

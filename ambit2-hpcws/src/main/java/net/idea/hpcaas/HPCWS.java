@@ -296,7 +296,9 @@ public class HPCWS {
 		// job finished successfully, download result files from the cluster
 		if (submittedJob.getState() == JobStateExt.FINISHED) {
 			String[] changedFiles = wsFileTransfer.getFileTransferWsSoap()
-					.listChangedFilesForJob(submittedJob.getId(), sessionCode).getString().toArray(new String[0]);
+					.listChangedFilesForJob(submittedJob.getId(), sessionCode)
+					.getString()
+					.toArray(new String[0]);
 
 			FileTransferMethodExt ft2 = wsFileTransfer.getFileTransferWsSoap()
 					.getFileTransferMethod(submittedJob.getId(), sessionCode);
