@@ -295,6 +295,9 @@ public class HPCWS {
 		tempDirJob.mkdirs();
 		// job finished successfully, download result files from the cluster
 		if (submittedJob.getState() == JobStateExt.FINISHED) {
+			String[] changedFiles = wsFileTransfer.getFileTransferWsSoap()
+					.listChangedFilesForJob(submittedJob.getId(), sessionCode).getString().toArray(new String[0]);
+
 			FileTransferMethodExt ft2 = wsFileTransfer.getFileTransferWsSoap()
 					.getFileTransferMethod(submittedJob.getId(), sessionCode);
 
@@ -308,6 +311,16 @@ public class HPCWS {
 				ssh.authPublickey(ft2.getCredentials().getUsername(), privatekey.getAbsolutePath());
 
 				ssh.newSCPFileTransfer().download(ft2.getSharedBasepath(), new FileSystemFile(tempDir));
+				for (String changedFile : changedFiles) {
+					try {
+						ssh.newSCPFileTransfer().download(
+								ft2.getSharedBasepath() + changedFile,
+								new FileSystemFile(tempDir + changedFile));
+						System.out.println("File" + changedFile + " downloaded.");
+					} catch (IOException x) {
+						x.printStackTrace();
+					}
+				}
 				ssh.disconnect();
 			} catch (Exception x) {
 				x.printStackTrace();
