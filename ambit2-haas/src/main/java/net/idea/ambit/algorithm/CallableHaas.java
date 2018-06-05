@@ -92,7 +92,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 		SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob, inputFile);
 
-		logger.log(Level.INFO,String.format("\nSubmitted job ID %s.\n", submittedTestJob.getId()));
+		logger.log(Level.INFO,String.format("Submitted job ID %s.", submittedTestJob.getId()));
 		try {
 			SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, delay);
 
