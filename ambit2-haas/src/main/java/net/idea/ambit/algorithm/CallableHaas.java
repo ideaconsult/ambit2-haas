@@ -81,10 +81,10 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 		JobSpecificationExt testJob = null;
 		File inputFile = null;
-		if ("haasexample" == algorithm.getId()) {
+		if (algorithm.getId().equals("haasexample")) {
 			inputFile = new File("test_haas.txt");
 			testJob = hpcws.CreateJob(1L, model.getName(), "ExpTests", inputFile);
-		} else if ("haasexnet" == algorithm.getId()) {
+		} else if (algorithm.getId().equals("haasexnet")) {
 			inputFile = new File(this.getClass().getClassLoader().getResource("haas/examples/config.json").toURI());
 			testJob = hpcws.CreateJob(2L, model.getName(), "ExpTests", inputFile);
 		} else
