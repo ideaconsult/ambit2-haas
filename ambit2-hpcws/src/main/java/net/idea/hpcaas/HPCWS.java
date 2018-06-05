@@ -149,7 +149,9 @@ public class HPCWS {
 		File tempDirJob = getTempDir(submittedTestJob.getId());
 		tempDirJob.mkdirs();
 		File privatekey = storeMetadata(ft, tempDirJob);
-		if (inputfile != null && inputfile.exists())
+		// TODO: We should fail gracefully if inputfile doesn't exist,
+		// 		 instead of just ignoring the issue.
+		//if (inputfile != null && inputfile.exists())
 		try (SSHClient ssh = new SSHClient()) {
 			String filename = p.getProperty("haas.knownhosts");
 			ssh.loadKnownHosts(new File(filename));
