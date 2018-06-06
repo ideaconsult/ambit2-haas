@@ -1,4 +1,4 @@
-package net.idea.ambit.algorithm;
+package net.idea.ambit.model;
 
 import org.restlet.Context;
 

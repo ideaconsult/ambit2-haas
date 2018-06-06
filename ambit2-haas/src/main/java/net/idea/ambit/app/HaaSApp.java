@@ -21,8 +21,8 @@ import ambit2.rest.task.TaskResource;
 import ambit2.rest.task.WarmupTask;
 import ambit2.rest.ui.UIResourceBase;
 import net.idea.ambit.algorithm.AlgorithmRouterHaas;
-import net.idea.ambit.algorithm.ModelRouterHaas;
 import net.idea.ambit.app.router.UIRouter;
+import net.idea.ambit.model.ModelRouterHaas;
 import net.idea.restnet.c.routers.MyRouter;
 
 public class HaaSApp extends AmbitFreeMarkerApplication<Object> {

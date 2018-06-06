@@ -26,6 +26,7 @@ import ambit2.rest.task.CallableProtectedTask;
 import ambit2.rest.task.TaskResult;
 import cz.it4i.hpcaas.jobmgmt.JobSpecificationExt;
 import cz.it4i.hpcaas.jobmgmt.SubmittedJobInfoExt;
+import net.idea.ambit.model.ModelResourceHaas;
 import net.idea.hpcaas.HPCWS;
 import net.idea.modbcum.i.IQueryRetrieval;
 
