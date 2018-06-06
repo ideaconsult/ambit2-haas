@@ -61,7 +61,7 @@ public class HPCWS {
 		File inputFile = new File("test_haas.txt");
 		JobSpecificationExt testJob = hpcws.CreateJobExample("TestJob", inputFile);
 		SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob,inputFile);
-		System.out.println(String.format("Submitted job ID %s.", submittedTestJob.getId()));
+		System.out.println(String.format("\nSubmitted job ID %s.\n", submittedTestJob.getId()));
 		SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, 30000);
 		File tempDirJob = hpcws.process(job);
 		System.out.println(tempDirJob);
@@ -72,7 +72,7 @@ public class HPCWS {
 		PasswordCredentialsExt credentials = new PasswordCredentialsExt();
 		credentials.setUsername(p.getProperty("haas.user"));
 		credentials.setPassword(p.getProperty("haas.pwd"));
-		System.out.println(String.format("Authenticating user [%s]...", credentials.getUsername()));
+		System.out.println(String.format("\nAuthenticating user [%s]...\n", credentials.getUsername()));
 		sessionCode = wsUserAndLimitationManagement.getUserAndLimitationManagementWsSoap()
 				.authenticateUserPassword(credentials);
 
@@ -89,35 +89,40 @@ public class HPCWS {
 		// each submitted job must contain at least one task
 		TaskSpecificationExt testTask = new TaskSpecificationExt();
 		testTask.setName(taskname);
-		testTask.setMinCores(1); // minimum number of cores required
-		testTask.setMaxCores(1); // maximum number of cores required
-		testTask.setWalltimeLimit(600); // maximum time for task to run
+		testTask.setMinCores(24); // minimum number of cores required
+		testTask.setMaxCores(24); // maximum number of cores required
+		testTask.setWalltimeLimit(3600); // maximum time for task to run
 										// (seconds)
-		testTask.setStandardOutputFile("console_Stdout");
-		testTask.setStandardErrorFile("console_Stderr");
-		testTask.setProgressFile("console_Stdprog");
-		testTask.setLogFile("console_Stdlog");
+		testTask.setStandardOutputFile("stdout.txt");
+		testTask.setStandardErrorFile("stderr.txt");
+		testTask.setProgressFile("progress.txt");
+		testTask.setLogFile("log.txt");
 		testTask.setCommandTemplateId(commandTemplateID); // commandTemplateID
 		// custom environment variables for the task
 		// testTask.setEnvironmentVariables(new EnvironmentVariableExt[0]);
 		// fill the command template parameters (see Table1 for “inputParam”)
 		ArrayOfCommandTemplateParameterValueExt a = new ArrayOfCommandTemplateParameterValueExt();
 		CommandTemplateParameterValueExt pv = new CommandTemplateParameterValueExt();
-		pv.setCommandParameterIdentifier("inputParam");
-		pv.setParameterValue("someStringParam");
+		pv.setCommandParameterIdentifier("configFile");
+		pv.setParameterValue("config.json");
 		a.getCommandTemplateParameterValueExt().add(pv);
 		testTask.setTemplateParameterValues(a);
+		testTask.setClusterTaskSubdirectory(null);
+		testTask.setIsExclusive(null);
+		testTask.setIsRerunnable(null);
+		testTask.setRequiredNodes(null);
+		testTask.setStandardInputFile(null);
 
 		// create job specification with the task above
 		JobSpecificationExt testJob = new JobSpecificationExt();
 		testJob.setName(taskname); // job name
-		testJob.setMinCores(1); // minimum number of cores required
-		testJob.setMaxCores(1); // maximum number of cores required
+		testJob.setMinCores(24); // minimum number of cores required
+		testJob.setMaxCores(24); // maximum number of cores required
 		testJob.setPriority(JobPriorityExt.AVERAGE);
-		testJob.setProject("ExpTests"); // accounting project
+		testJob.setProject(project); // accounting project
 		testJob.setWaitingLimit(null); // limit for the waiting time in cluster
 										// queue
-		testJob.setWalltimeLimit(600); // maximum time for job to run (seconds)
+		testJob.setWalltimeLimit(3600); // maximum time for job to run (seconds)
 		testJob.setClusterNodeTypeId(7L); // Salomon express queue (1h limit)
 		// custom environment variables for the job
 		// testJob.environmentVariables = new EnvironmentVariableExt[0];
@@ -125,13 +130,18 @@ public class HPCWS {
 		ArrayOfTaskSpecificationExt tasks = new ArrayOfTaskSpecificationExt();
 		tasks.getTaskSpecificationExt().add(testTask);
 		testJob.setTasks(tasks);
+		testJob.setNotificationEmail("some.email@mail.com");
+		testJob.setNotifyOnAbort(false);
+		testJob.setNotifyOnFinish(false);
+		testJob.setNotifyOnStart(false);
+		testJob.setPhoneNumber("000111222");
 		return testJob;
 	}
 
 	public SubmittedJobInfoExt SubmitJob(JobSpecificationExt testJob, File inputfile) {
 		// create job
 		SubmittedJobInfoExt submittedTestJob = wsJobManagement.getJobManagementWsSoap().createJob(testJob, sessionCode);
-		System.out.println(String.format("Created job ID %s.", submittedTestJob.getId()));
+		System.out.println(String.format("\nCreated job ID %s.\n", submittedTestJob.getId()));
 
 		// upload input files
 		FileTransferMethodExt ft = wsFileTransfer.getFileTransferWsSoap()
@@ -139,10 +149,13 @@ public class HPCWS {
 		File tempDirJob = getTempDir(submittedTestJob.getId());
 		tempDirJob.mkdirs();
 		File privatekey = storeMetadata(ft, tempDirJob);
-		if (inputfile != null && inputfile.exists())
+		// TODO: We should fail gracefully if inputfile doesn't exist,
+		// 		 instead of just ignoring the issue.
+		//if (inputfile != null && inputfile.exists())
 		try (SSHClient ssh = new SSHClient()) {
-			String filename = p.getProperty("haas.knownhosts");
-			ssh.loadKnownHosts(new File(filename));
+			// TODO: MD5 fingerprints are insecure. Best to import the server's
+			// public key as already implemented in the Python Jupyter notebook.
+			ssh.addHostKeyVerifier("70:01:c9:9a:5d:88:91:c7:1b:c0:84:d1:fa:4e:83:5c");
 			ssh.connect(ft.getServerHostname());
 				ssh.authPublickey(ft.getCredentials().getUsername(), privatekey.getAbsolutePath());
 				ssh.newSCPFileTransfer().upload(inputfile.getAbsolutePath(), ft.getSharedBasepath());
@@ -172,7 +185,7 @@ public class HPCWS {
 				Thread.sleep(delay);
 				// get info for the job
 				submittedJob = checkstatus(jobId);
-				System.out.println(String.format("Submitted job state %s.", submittedJob.getState()));
+				System.out.println(String.format("\nSubmitted job state %s.\n", submittedJob.getState()));
 				if (submittedJob.getState() == JobStateExt.SUBMITTED
 						|| submittedJob.getState() == JobStateExt.CONFIGURING
 						|| submittedJob.getState() == JobStateExt.QUEUED
@@ -277,24 +290,39 @@ public class HPCWS {
 	}
 
 	public File process(SubmittedJobInfoExt submittedJob) {
-		File tempDir = getTempDir();
 		File tempDirJob = getTempDir(submittedJob.getId());
 		tempDirJob.mkdirs();
 		// job finished successfully, download result files from the cluster
 		if (submittedJob.getState() == JobStateExt.FINISHED) {
+			String[] changedFiles = wsFileTransfer.getFileTransferWsSoap()
+					.listChangedFilesForJob(submittedJob.getId(), sessionCode)
+					.getString()
+					.toArray(new String[0]);
+
 			FileTransferMethodExt ft2 = wsFileTransfer.getFileTransferWsSoap()
 					.getFileTransferMethod(submittedJob.getId(), sessionCode);
 
 			File privatekey = storeMetadata(ft2, tempDirJob);
 
 			try (SSHClient ssh = new SSHClient()) {
-				String filename = p.getProperty("haas.knownhosts");
-
-				ssh.loadKnownHosts(new File(filename));
+				// TODO: MD5 fingerprints are insecure. Best to import the server's
+				// public key as already implemented in the Python Jupyter notebook.
+				ssh.addHostKeyVerifier("70:01:c9:9a:5d:88:91:c7:1b:c0:84:d1:fa:4e:83:5c");
 				ssh.connect(ft2.getServerHostname());
 				ssh.authPublickey(ft2.getCredentials().getUsername(), privatekey.getAbsolutePath());
 
-				ssh.newSCPFileTransfer().download(ft2.getSharedBasepath(), new FileSystemFile(tempDir));
+				FileSystemFile destDir = new FileSystemFile(tempDirJob);
+
+				for (String changedFile : changedFiles) {
+					try {
+						ssh.newSCPFileTransfer().download(
+								ft2.getSharedBasepath() + "/" + changedFile,
+								destDir);
+						System.out.println("File " + changedFile + " downloaded.");
+					} catch (IOException x) {
+						x.printStackTrace();
+					}
+				}
 				ssh.disconnect();
 			} catch (Exception x) {
 				x.printStackTrace();
