@@ -318,7 +318,7 @@ public class HPCWS {
 						ssh.newSCPFileTransfer().download(
 								ft2.getSharedBasepath() + "/" + changedFile,
 								destDir);
-						System.out.println("File" + changedFile + " downloaded.");
+						System.out.println("File " + changedFile + " downloaded.");
 					} catch (IOException x) {
 						x.printStackTrace();
 					}
