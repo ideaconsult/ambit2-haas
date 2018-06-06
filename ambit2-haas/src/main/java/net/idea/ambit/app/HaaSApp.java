@@ -26,7 +26,7 @@ import net.idea.restnet.c.routers.MyRouter;
 
 
 public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
-
+	protected static final String HAAS_HOME = "HAAS_HOME";
 	public HaaSApp() {
 		this(false);
 	}
@@ -35,7 +35,13 @@ public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
 		super(standalone);
 
 	}
-
+	public synchronized String readHaasHome() {
+		try {
+			return getProperty(HAAS_HOME, ambitProperties);
+		} catch (Exception x) {
+			return null;
+		}
+	}
 	@Override
 	public Restlet createInboundRoot() {
 		Restlet root = initInboundRoot();

@@ -24,6 +24,7 @@ Include these in your maven settings (~/.m2/settings.xml)
         <haas.pwd>yourhaasuser</haas.pwd>
         <haas.knownhosts>d://bin/putty/known_hosts</haas.knownhosts>
         <haas.keyfile>d://bin/putty/salomon_id_rsa.ppk</haas.keyfile>
+        <HAAS_HOME>folder_for_tmp_files</HAAS_HOME>
       </properties>
     </profile>   
 ```

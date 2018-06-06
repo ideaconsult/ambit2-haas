@@ -152,3 +152,4 @@ solr.basic.user.4=${solr.basic.user.4}
 solr.basic.password.4=${solr.basic.password.4}
 solr.filter=${solr.filter}
 ##############################################################
+HAAS_HOME=${HAAS_HOME}
