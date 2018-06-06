@@ -35,7 +35,7 @@ public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
 		super(standalone);
 
 	}
-	public synchronized String readHaasHome() {
+	public synchronized String getdHaasHome() {
 		try {
 			return getProperty(HAAS_HOME, ambitProperties);
 		} catch (Exception x) {

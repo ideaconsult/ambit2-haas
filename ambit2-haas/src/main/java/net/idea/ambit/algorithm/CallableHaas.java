@@ -24,11 +24,8 @@ import ambit2.rest.algorithm.AlgorithmURIReporter;
 import ambit2.rest.model.ModelURIReporter;
 import ambit2.rest.task.CallableProtectedTask;
 import ambit2.rest.task.TaskResult;
-import ambit2.rest.ui.UIResourceBase;
 import cz.it4i.hpcaas.jobmgmt.JobSpecificationExt;
 import cz.it4i.hpcaas.jobmgmt.SubmittedJobInfoExt;
-import net.idea.ambit.app.AmbitComponent;
-import net.idea.ambit.app.HaaSApp;
 import net.idea.hpcaas.HPCWS;
 import net.idea.modbcum.i.IQueryRetrieval;
 
@@ -41,6 +38,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 	protected AlgorithmURIReporter algReporter;
 	protected Algorithm algorithm;
 	protected long delay;
+	File resultFolder;
 
 	public UUID getUuid() {
 		return uuid;
@@ -52,8 +50,10 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 	public CallableHaas(Form form, Algorithm<String> algorithm,
 			ModelURIReporter<IQueryRetrieval<ModelQueryResults>> modelReporter, AlgorithmURIReporter algReporter,
+			File resultFolder,
 			USERID token) {
 		super(token);
+		this.resultFolder = resultFolder;
 		this.algorithm = algorithm;
 		try {
 			this.delay = Long.parseLong(OpenTox.params.delay.getFirstValue(form).toString());
@@ -109,27 +109,26 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			case FINISHED: {
 				// TODO: This will be finished once the problem with storing models and other
 				// intermediate files in general on the cluster is solved.
-				/*
+				
 				model.setId(((Long) submittedTestJob.getId()).intValue());
 				File file = hpcws.process(job);
 				model.setContent(file.getAbsolutePath());
 				try {
 					String uri = modelReporter.getURI(model);
+					// For now, we'll just serve the output files as a ZIP archive.
+					File resultsDir = hpcws.process(job);
+					//name has to be job specific, otherwise will overwrite if >1 job done
+					//we return model URI, not path to files.
+					// and the model resource will serve files under /model/{id} 
+					//ideally the model URI should be independent of job id, but will do for now
+					String resultsZipPath = String.format("%s/%d/job_results.zip",resultFolder,model.getId());
+					zipFiles(resultsDir, resultsZipPath);
+					
 					return new TaskResult(uri);
 				} catch (Exception x) {
 
 				}
 				return new TaskResult(file.toString());
-				*/
-				// For now, we'll just serve the output files as a ZIP archive.
-				File resultsDir = hpcws.process(job);
-				// TODO: These can be written in a much more elegant way.
-				String tomcatBase = System.getProperty("catalina.base");
-				String resultsZipPath = String.format(
-						"%s/webapps/haas/static/job_results.zip", tomcatBase);
-				zipFiles(resultsDir, resultsZipPath);
-				// TODO: This doesn't work yet.
-				return new TaskResult(resultsZipPath);
 			}
 			case CANCELED: {
 				throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,
