@@ -21,7 +21,6 @@ import ambit2.core.data.model.IEvaluation.EVStatsType;
 import ambit2.core.data.model.IEvaluation.EVType;
 import ambit2.core.data.model.ModelQueryResults;
 import ambit2.model.evaluation.EvaluationStats;
-import ambit2.rest.reporters.CatalogURIReporter;
 
 /**
  * JSON
@@ -30,7 +29,7 @@ import ambit2.rest.reporters.CatalogURIReporter;
  *
  * @param <Q>
  */
-public class ModelJSONReporter extends CatalogURIReporter<ModelQueryResults> {
+public class ModelJSONReporter extends ModelURIReporter {
 
 	/**
 	 * 
@@ -93,11 +92,6 @@ public class ModelJSONReporter extends CatalogURIReporter<ModelQueryResults> {
 			} catch (Exception x) {
 			}
 		}
-	}
-
-	@Override
-	public String getURI(String ref, ModelQueryResults item) {
-		return String.format("%s%s%s", ref, "".equals(ref) ? "" : "/", item.getId());
 	}
 
 	@Override

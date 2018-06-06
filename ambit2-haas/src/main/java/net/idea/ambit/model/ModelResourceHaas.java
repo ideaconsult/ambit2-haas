@@ -34,6 +34,14 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 	}
 
 	@Override
+	protected void doInit() throws ResourceException {
+		super.doInit();
+		customizeVariants(new MediaType[] { MediaType.TEXT_URI_LIST, MediaType.APPLICATION_JSON,
+				MediaType.APPLICATION_JAVASCRIPT, MediaType.TEXT_HTML, MediaType.APPLICATION_ZIP });
+
+	}
+
+	@Override
 	protected Iterator<ModelQueryResults> createQuery(Context context, Request request, Response response)
 			throws ResourceException {
 		// extracts the id from /model{id}
@@ -42,12 +50,14 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 		// list all available models at the moment
 		// (do we ?)
 		int modelid = -1;
+		//returning not found instead of bad request, mostly to make the rendering easier atm
+		//but could be considered security feature ;)
 		if (modelkey == null)
-			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+			throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
 		try {
 			modelid = Integer.parseInt(modelkey.toString());
 		} catch (NumberFormatException x) {
-			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+			throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
 		}
 		// use only the id for model so far
 		// ideally we would like to store and retrieve a bit more info about the
@@ -55,13 +65,14 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 		// e.g. as in MySQL based model storage in ambit
 		ModelQueryResults model = new ModelQueryResults();
 		model.setId(modelid);
-		model.setName(String.format("Exnet model %d",modelid));
+		model.setName(String.format("Exnet model %d", modelid));
 		model.setTrainingInstances("ExCAPEDBv5");
 		model.setStars(1);
 		model.setCreator("Heappe");
-		model.setContent(String.format("%s/model/%s?media=%s", getRequest().getRootRef(), model.getId(), MediaType.APPLICATION_ZIP.getName()));
+		model.setContent(String.format("%s/model/%s?media=%s", getRequest().getRootRef(), model.getId(),
+				MediaType.APPLICATION_ZIP.getName()));
 		model.setContentMediaType(MediaType.APPLICATION_ZIP.getName());
-		model.setAlgorithm(String.format("%s/algorithm/haasexnet",getRequest().getRootRef()));
+		model.setAlgorithm(String.format("%s/algorithm/haasexnet", getRequest().getRootRef()));
 		String resultFolder = ((HaaSApp) getApplication()).getdHaasHome();
 		File modelPath = new File(getModelPath(new File(resultFolder), model));
 		// throw exceptions if the path to the zip files is not found
@@ -88,15 +99,30 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 			if (jsonpcallback == null)
 				jsonpcallback = params.getFirstValue("callback");
 			ModelJSONReporter r = new ModelJSONReporter(getRequest(), jsonpcallback);
-
 			return new StringConvertor(r, MediaType.APPLICATION_JAVASCRIPT);
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_ZIP)) {
-			return null;
+			String resultFolder = ((HaaSApp) getApplication()).getdHaasHome();
+			ModelFileReporter r = new ModelFileReporter(getRequest(), resultFolder, variant.getMediaType());
+			return new DownloadConvertor(r, MediaType.APPLICATION_ZIP, ".zip");
+		} else if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
+			ModelURIReporter r = new ModelURIReporter(getRequest());
+			return new StringConvertor(r, MediaType.TEXT_PLAIN);
+
 		} else {
 			ModelJSONReporter r = new ModelJSONReporter(getRequest(), null);
 			return new StringConvertor(r, MediaType.APPLICATION_JSON);
 		}
 
 	}
+	
+	@Override
+	protected Representation post(Representation entity) throws ResourceException {
+		throw new ResourceException(Status.SERVER_ERROR_NOT_IMPLEMENTED);
+	}
+	@Override
+	protected Representation post(Representation entity, Variant variant) throws ResourceException {
+		throw new ResourceException(Status.SERVER_ERROR_NOT_IMPLEMENTED);
+	}
 
+	
 }

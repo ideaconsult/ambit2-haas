@@ -435,19 +435,7 @@ function defineModelTable(root, url) {
 										return sOut;
 									}
 								},
-								/*
-								 * { //0 "aTargets": [ 0 ],
-								 * "mDataProp":"algorithm.img", "sClass" :
-								 * "center", "bSortable" : true, "bSearchable" :
-								 * false, "mData" : null, "bUseRendered" :
-								 * false, "fnRender" : function(o,val) { return "<img
-								 * style='float: left; margin: .1em;'
-								 * src='"+root + o.aData.algorithm.img +"'
-								 * title='"+o.aData.algorithm.img+"'><br/>" + "<span
-								 * class='ui-icon ui-icon-folder-collapsed
-								 * zoomstruc' style='float: left; margin: .1em;'
-								 * title='Click to show model details'></span>"; } },
-								 */
+								
 								{
 									"mDataProp" : "stars",
 									"aTargets" : [ 1 ],
@@ -498,11 +486,15 @@ function defineModelTable(root, url) {
 										pos = shortURI.lastIndexOf("/");
 										if (pos >= 0)
 											shortURI = val.substring(pos + 1);
+										var sOut = val;
+										/*
 										var sOut = "<a href='"
 												+ val
 												+ "?max=100' title='Click to browse the training dataset "
 												+ val + "' target='dataset'>"
 												+ shortURI + "</a> ";
+												*/
+										/*
 										sOut += "<a href='"
 												+ root
 												+ "/model?dataset="
@@ -510,6 +502,7 @@ function defineModelTable(root, url) {
 												+ "&max=100' title='Click to view models using this training dataset "
 												+ val
 												+ "'><span class='ui-icon ui-icon-calculator' style='float: right; margin: .1em;' ></span></a>";
+												*/
 										return sOut;
 									}
 								},
@@ -534,15 +527,19 @@ function defineModelTable(root, url) {
 											shortURI = shortURI.substring(val,
 													20)
 													+ "...";
+										
 										var sOut = "<a href='"
 												+ uri
 												+ "' title='Click to view the algorithm at "
 												+ uri + "' target='algorithm'>"
 												+ shortURI;
+										/*
 										sOut += "<img style='float: left; margin: .1em;' src='"
 												+ root
 												+ o.aData.algorithm.img
 												+ "'> </a> ";
+												*/
+										/*
 										sOut += "<a href='"
 												+ root
 												+ "/model?algorithm="
@@ -550,6 +547,7 @@ function defineModelTable(root, url) {
 												+ "&max=100' title='Click to view models using "
 												+ uri
 												+ " algorithm'><span class='ui-icon ui-icon-calculator' style='float: right; margin: .1em;' ></span></a>";
+										*/
 										return sOut;
 									}
 								},
@@ -729,9 +727,11 @@ function modelFormatDetails(oTable, nTr, root) {
 	sOut += '<tbody>';
 
 	sOut += '<tr><td colspan="2"></td><td rowspan="7">';
+	/*
 	if (model.algorithm.URI.toLowerCase().indexOf('toxtree') >= 0) {
 		sOut += '<img src="' + model.ambitprop.legend + '">';
 	}
+	*/
 	sOut += '</td></tr>\n';
 
 	sOut += '<tr><td>Model name</td><td><a href=\"' + model.uri + '\">'
@@ -753,6 +753,7 @@ function modelFormatDetails(oTable, nTr, root) {
 	sOut += '<tr><td>Training algorithm</td><td><a href="'
 			+ model.algorithm.URI + '">' + model.algorithm.URI
 			+ '</a></td></tr>';
+	/*
 	sOut += '<tr><td>Variables</td><td>';
 	sOut += '<a href="' + model.independent
 			+ '" target="vars">Independent</a>|&nbsp;';
@@ -760,8 +761,10 @@ function modelFormatDetails(oTable, nTr, root) {
 			+ '" target="vars">Dependent</a>|&nbsp;';
 	sOut += '<a href="' + model.predicted
 			+ '" target="vars">Predicted</a>&nbsp;';
+			*/
 	sOut += '</td></tr>\n';
 
+	/*
 	if (model.ambitprop.content.lastIndexOf("http", 0) == 0) { // starts with
 		// http
 		sOut += '<tr><td>Model content</td><td><a href="'
@@ -771,12 +774,16 @@ function modelFormatDetails(oTable, nTr, root) {
 		sOut += '<tr><td>Model content</td><td>' + model.ambitprop.content
 				+ ' [' + model.ambitprop.mimetype + ']</td></tr>';
 	}
+	*/
 
 	sOut += '<tr><td>Model URI</td><td><a href=\"' + model.URI + '\">'
 			+ model.URI + '</a></td></tr>';
+	sOut += '<tr><td>Model files</td><td><a href=\"' + model.URI + '?media=application/zip\">ZIP archive</a></td></tr>';	
 	sOut += '</tbody></table>';
 	// form to apply the model
+	/*
 	sOut += '<div class="row ui-widget-content ui-corner-all" style="padding:5px;">';
+	
 	sOut += '<form action="' + model.URI + '" method="POST" >'
 	sOut += '<label class="five columns alpha">Enter <a href="'
 			+ root
@@ -786,7 +793,7 @@ function modelFormatDetails(oTable, nTr, root) {
 	sOut += '<input class="eight columns omega" type="text" name="dataset_uri" value="">';
 	sOut += '<input class="three columns omega" type="submit" class="ui-button ui-widget ui-state-default ui-corner-all"  aria-disabled="false" role="button" value="Predict">';
 	sOut += '</form></div>';
-
+	*/
 	return sOut;
 }
 

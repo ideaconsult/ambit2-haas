@@ -10,7 +10,7 @@
 },
  {
 	"id": "haasexample",
-	"name": "Launches example job on Salomon. For testing purposes",
+	"name": "An example job on Salomon. For testing purposes",
 	"class": null,
 	"inputparam": null,
 	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
@@ -20,7 +20,7 @@
 },
  {
 	"id": "haasexnet",
-	"name": "Launches Exnet model building on Salomon using ExCAPEDBv5 data",
+	"name": "Builds Exnet model on Salomon using ExCAPEDBv5 data",
 	"class": null,
 	"inputparam": null,
 	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],

@@ -79,48 +79,6 @@ public class TestHPCWS {
 
 	}
 
-	@Test
-	public void testscp() throws Exception {
-
-		// ssh.useCompression(); // Can lead to significant speedup (needs JZlib
-		// in classpath)
-		Properties p = loadProperties();
-		try (SSHClient ssh = new SSHClient()) {
-			ssh.loadKnownHosts(new File(p.getProperty("haas.knownhosts")));
-			ssh.connect("login.salomon.it4i.cz");
-
-			ssh.newSCPFileTransfer().download("/home/ninaj/ambitcli.sh", new FileSystemFile("f://UTEMP/"));
-			ssh.disconnect();
-		} finally {
-
-		}
-	}
-
-	@Test
-	public void testscpSalomon() throws Exception {
-		// HKEY_CURRENT_USER\SoftWare\SimonTatham\PuTTY\SshHostKeys.
-		// ssh.useCompression(); // Can lead to significant speedup (needs JZlib
-		// in classpath)
-		Properties p = loadProperties();
-		try (SSHClient ssh = new SSHClient()) {
-			String filename = p.getProperty("haas.knownhosts");
-			Assert.assertNotNull(filename);
-			ssh.loadKnownHosts(new File(filename));
-			ssh.connect("login.salomon.it4i.cz");
-			ssh.authPublickey("dd-17-31-20",
-					//"dd-17-31-15",
-					//"D://src-excape/ambit-dl/ambit2-dl/ambit2-hpcws/keys/id_rsa"
-					//"D://src-excape/ambit-dl/ambit2-dl/ambit2-hpcws/haas.public.key",
-					"D://src-excape/ambit-dl/ambit2-dl/ambit2-hpcws/haas.private.key"
-					);
-			ssh.newSCPFileTransfer().download("/scratch/temp/HaasFiji/243", new FileSystemFile("f://UTEMP/"));
-			ssh.disconnect();
-		} catch (Exception x) {
-			x.printStackTrace();
-		} finally {
-
-		} 
-	}
 
 	@Test
 	public void testProperties() throws Exception {
