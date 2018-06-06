@@ -21,12 +21,13 @@ import ambit2.rest.task.TaskResource;
 import ambit2.rest.task.WarmupTask;
 import ambit2.rest.ui.UIResourceBase;
 import net.idea.ambit.algorithm.AlgorithmRouterHaas;
+import net.idea.ambit.algorithm.ModelRouterHaas;
 import net.idea.ambit.app.router.UIRouter;
 import net.idea.restnet.c.routers.MyRouter;
 
-
 public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
 	protected static final String HAAS_HOME = "HAAS_HOME";
+
 	public HaaSApp() {
 		this(false);
 	}
@@ -35,6 +36,7 @@ public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
 		super(standalone);
 
 	}
+
 	public synchronized String getdHaasHome() {
 		try {
 			return getProperty(HAAS_HOME, ambitProperties);
@@ -42,6 +44,7 @@ public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
 			return null;
 		}
 	}
+
 	@Override
 	public Restlet createInboundRoot() {
 		Restlet root = initInboundRoot();
@@ -94,12 +97,11 @@ public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
 		/** /algorithm */
 		router.attach(MLResources.algorithm, new AlgorithmRouterHaas(getContext()));
 		/** /model */
-		// router.attach(MLResources.model_resource, new
-		// ModelRouter(getContext()));
+		router.attach(MLResources.model_resource, new ModelRouterHaas(getContext()));
 		/** /task */
 		router.attach(TaskResource.resource, new TaskRouter(getContext()));
 		router.attach("/ui", new UIRouter(getContext()));
-		
+
 		attachStaticResources(router);
 
 		router.attach("/chelp", HelpResource.class);
@@ -107,7 +109,7 @@ public class HaaSApp extends AmbitFreeMarkerApplication<Object> {
 
 		router.setDefaultMatchingMode(Template.MODE_STARTS_WITH);
 		router.setRoutingMode(Router.MODE_BEST_MATCH);
-		
+
 		return router;
 	}
 }

@@ -121,7 +121,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 					//we return model URI, not path to files.
 					// and the model resource will serve files under /model/{id} 
 					//ideally the model URI should be independent of job id, but will do for now
-					String resultsZipPath = String.format("%s/%d/job_results.zip",resultFolder,model.getId());
+					String resultsZipPath = ModelResourceHaas.getModelPath(resultFolder,model);
 					zipFiles(resultsDir, resultsZipPath);
 					
 					return new TaskResult(uri);
