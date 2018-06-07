@@ -82,11 +82,21 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 				.getResourceAsStream("net/idea/ambit/hpcws/config/haas.properties")) {
 			p.load(in);
 		} catch (IOException x) {
-			x.printStackTrace();
-			System.exit(-1);
+			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x.getMessage(),x);
 		}
-		HPCWS hpcws = new HPCWS(resultFolder);
-		hpcws.AuthenticateUserPassword();
+		
+		HPCWS hpcws = null;
+		try {
+			//hpcws = new HPCWS(resultFolder);
+			//temp folder if not specified
+			hpcws = new HPCWS();
+			hpcws.AuthenticateUserPassword();
+		} catch (Exception x) {
+			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,x.getMessage(),x);
+		}
+		
+		
+		
 		Thread.yield();
 
 		JobSpecificationExt testJob = null;
@@ -123,13 +133,18 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 					// and the model resource will serve files under /model/{id} 
 					//ideally the model URI should be independent of job id, but will do for now
 					String resultsZipPath = ModelResourceHaas.getModelPath(resultFolder,model);
-					zipFiles(resultsDir, resultsZipPath);
+					
+					try {
+						zipFiles(resultsDir, resultsZipPath);
+					} catch (IOException x) {
+						throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error creating zip archive",x);	
+					}
 					
 					return new TaskResult(uri);
 				} catch (Exception x) {
-
+					throw new ResourceException(Status.SERVER_ERROR_INTERNAL,x.getMessage(),x);
 				}
-				return new TaskResult(file.toString());
+				
 			}
 			case CANCELED: {
 				throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,
@@ -154,7 +169,9 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 	private static void zipFiles(File sourceDir, String zipFilePath) throws IOException {
 		Files.deleteIfExists(Paths.get(zipFilePath));
 		Path dpath = Files.createFile(Paths.get(zipFilePath));
+		
 		try (ZipOutputStream zstream = new ZipOutputStream(Files.newOutputStream(dpath))) {
+			
 			Path spath = sourceDir.toPath();
 			Files.walk(spath)
 					.filter(path -> !Files.isDirectory(path))
@@ -165,9 +182,10 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 							Files.copy(path, zstream);
 							zstream.closeEntry();
 						} catch (IOException x) {
+							//this is effectively hiding the error
 							x.printStackTrace();
 						}
 					});
-		}
+		} 
 	}
 }
