@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.openscience.cdk.io.formats.ZindoFormat;
 //import org.opentox.rest.RestException;
 import org.restlet.data.Form;
 import org.restlet.data.Status;
@@ -133,8 +134,9 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 					// and the model resource will serve files under /model/{id} 
 					//ideally the model URI should be independent of job id, but will do for now
 					String resultsZipPath = ModelResourceHaas.getModelPath(resultFolder,model);
-					
+					File modelfolder = new File(resultsZipPath).getParentFile();
 					try {
+						if (!modelfolder.exists()) modelfolder.mkdirs();
 						zipFiles(resultsDir, resultsZipPath);
 					} catch (IOException x) {
 						throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error creating zip archive",x);	
