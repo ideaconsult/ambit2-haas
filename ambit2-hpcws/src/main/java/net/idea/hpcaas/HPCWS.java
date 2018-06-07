@@ -40,9 +40,15 @@ public class HPCWS {
 	protected UserAndLimitationManagementWs wsUserAndLimitationManagement = new UserAndLimitationManagementWs();
 	protected String sessionCode; // code acquired via authentication
 	protected Properties p;
+	protected File resultFolder;
 
 	public HPCWS() {
+		this(getTempDir());
+	}
+
+	public HPCWS(File resultFolder) {
 		super();
+		this.resultFolder = resultFolder;
 		p = new Properties();
 		try (InputStream in = HPCWS.class.getClassLoader()
 				.getResourceAsStream("net/idea/ambit/hpcws/config/haas.properties")) {
@@ -55,20 +61,24 @@ public class HPCWS {
 
 	public static void main(String[] args) {
 
-		HPCWS hpcws = new HPCWS();
-		
-		hpcws.AuthenticateUserPassword();
-		File inputFile = new File("test_haas.txt");
-		JobSpecificationExt testJob = hpcws.CreateJobExample("TestJob", inputFile);
-		SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob,inputFile);
-		System.out.println(String.format("\nSubmitted job ID %s.\n", submittedTestJob.getId()));
-		SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, 30000);
-		File tempDirJob = hpcws.process(job);
-		System.out.println(tempDirJob);
+		try {
+			HPCWS hpcws = new HPCWS();
+
+			hpcws.AuthenticateUserPassword();
+			File inputFile = new File("test_haas.txt");
+			JobSpecificationExt testJob = hpcws.CreateJobExample("TestJob", inputFile);
+			SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob, inputFile);
+			System.out.println(String.format("\nSubmitted job ID %s.\n", submittedTestJob.getId()));
+			SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, 30000);
+			File tempDirJob = hpcws.process(job);
+			System.out.println(tempDirJob);
+		} catch (IOException x) {
+			x.printStackTrace();
+		}
 	}
 
 	public void AuthenticateUserPassword() {
-		System.out.println(p);
+
 		PasswordCredentialsExt credentials = new PasswordCredentialsExt();
 		credentials.setUsername(p.getProperty("haas.user"));
 		credentials.setPassword(p.getProperty("haas.pwd"));
@@ -78,13 +88,14 @@ public class HPCWS {
 
 	}
 
-	public JobSpecificationExt CreateJobExample(String taskname,File inputFile) {
-		return CreateJob(1L,taskname, "ExpTests", inputFile);
+	public JobSpecificationExt CreateJobExample(String taskname, File inputFile) {
+		return CreateJob(1L, taskname, "ExpTests", inputFile);
 	}
 
 	public JobSpecificationExt CreateJobExnetBuild(String taskname, File inputFile) {
-		return CreateJob(2L,taskname, "ExpTests", inputFile);
+		return CreateJob(2L, taskname, "ExpTests", inputFile);
 	}
+
 	public JobSpecificationExt CreateJob(long commandTemplateID, String taskname, String project, File inputfile) {
 		// each submitted job must contain at least one task
 		TaskSpecificationExt testTask = new TaskSpecificationExt();
@@ -92,7 +103,7 @@ public class HPCWS {
 		testTask.setMinCores(24); // minimum number of cores required
 		testTask.setMaxCores(24); // maximum number of cores required
 		testTask.setWalltimeLimit(3600); // maximum time for task to run
-										// (seconds)
+											// (seconds)
 		testTask.setStandardOutputFile("stdout.txt");
 		testTask.setStandardErrorFile("stderr.txt");
 		testTask.setProgressFile("progress.txt");
@@ -138,7 +149,7 @@ public class HPCWS {
 		return testJob;
 	}
 
-	public SubmittedJobInfoExt SubmitJob(JobSpecificationExt testJob, File inputfile) {
+	public SubmittedJobInfoExt SubmitJob(JobSpecificationExt testJob, File inputfile) throws IOException {
 		// create job
 		SubmittedJobInfoExt submittedTestJob = wsJobManagement.getJobManagementWsSoap().createJob(testJob, sessionCode);
 		System.out.println(String.format("\nCreated job ID %s.\n", submittedTestJob.getId()));
@@ -146,22 +157,22 @@ public class HPCWS {
 		// upload input files
 		FileTransferMethodExt ft = wsFileTransfer.getFileTransferWsSoap()
 				.getFileTransferMethod(submittedTestJob.getId(), sessionCode);
-		File tempDirJob = getTempDir(submittedTestJob.getId());
+		File tempDirJob = getJobFolder(submittedTestJob.getId());
 		tempDirJob.mkdirs();
 		File privatekey = storeMetadata(ft, tempDirJob);
 		// TODO: We should fail gracefully if inputfile doesn't exist,
-		// 		 instead of just ignoring the issue.
-		//if (inputfile != null && inputfile.exists())
+		// instead of just ignoring the issue.
+		// if (inputfile != null && inputfile.exists())
 		try (SSHClient ssh = new SSHClient()) {
 			// TODO: MD5 fingerprints are insecure. Best to import the server's
 			// public key as already implemented in the Python Jupyter notebook.
 			ssh.addHostKeyVerifier("70:01:c9:9a:5d:88:91:c7:1b:c0:84:d1:fa:4e:83:5c");
 			ssh.connect(ft.getServerHostname());
-				ssh.authPublickey(ft.getCredentials().getUsername(), privatekey.getAbsolutePath());
-				ssh.newSCPFileTransfer().upload(inputfile.getAbsolutePath(), ft.getSharedBasepath());
+			ssh.authPublickey(ft.getCredentials().getUsername(), privatekey.getAbsolutePath());
+			ssh.newSCPFileTransfer().upload(inputfile.getAbsolutePath(), ft.getSharedBasepath());
 			ssh.disconnect();
-		} catch (Exception x) {
-			x.printStackTrace();
+		} catch (IOException x) {
+			throw x;
 		} finally {
 
 		}
@@ -258,46 +269,45 @@ public class HPCWS {
 		return submittedJob;
 	}
 
-	protected File getTempDir() {
+	protected static File getTempDir() {
 		return new File(String.format("%s/haas", System.getProperty("java.io.tmpdir")));
 	}
 
-	protected File getTempDir(long jobId) {
-		return new File(String.format("%s/%d", getTempDir(), jobId));
+	protected File getJobFolder(long jobId) {
+		return new File(String.format("%s/%d", resultFolder.getAbsoluteFile(), jobId));
+		// return new File(String.format("%s/%d", getTempDir(), jobId));
 	}
 
-	protected File storeMetadata(FileTransferMethodExt ft, File tempDirJob) {
+	protected File storeMetadata(FileTransferMethodExt ft, File tempDirJob) throws IOException {
 		File properties = new File(tempDirJob, "haas.properties");
 		try (BufferedWriter w = new BufferedWriter(new FileWriter(properties))) {
 			w.write(String.format("username=%s\n", ft.getCredentials().getUsername()));
 			w.write(String.format("sharedBasepath=%s\n", ft.getSharedBasepath()));
 		} catch (Exception x) {
-			x.printStackTrace();
+			throw x;
 		}
 		File privatekey = new File(tempDirJob, "haas.private.key");
 		try (BufferedWriter w = new BufferedWriter(new FileWriter(privatekey))) {
 			w.write(ft.getCredentials().getPrivateKey());
-		} catch (Exception x) {
-			x.printStackTrace();
+		} catch (IOException x) {
+			throw x;
 		}
 		File publickey = new File(tempDirJob, "haas.public.key");
 		try (BufferedWriter w = new BufferedWriter(new FileWriter(publickey))) {
 			w.write(ft.getCredentials().getPublicKey());
-		} catch (Exception x) {
-			x.printStackTrace();
+		} catch (IOException x) {
+			throw x;
 		}
 		return privatekey;
 	}
 
-	public File process(SubmittedJobInfoExt submittedJob) {
-		File tempDirJob = getTempDir(submittedJob.getId());
+	public File process(SubmittedJobInfoExt submittedJob) throws IOException {
+		File tempDirJob = getJobFolder(submittedJob.getId());
 		tempDirJob.mkdirs();
 		// job finished successfully, download result files from the cluster
 		if (submittedJob.getState() == JobStateExt.FINISHED) {
 			String[] changedFiles = wsFileTransfer.getFileTransferWsSoap()
-					.listChangedFilesForJob(submittedJob.getId(), sessionCode)
-					.getString()
-					.toArray(new String[0]);
+					.listChangedFilesForJob(submittedJob.getId(), sessionCode).getString().toArray(new String[0]);
 
 			FileTransferMethodExt ft2 = wsFileTransfer.getFileTransferWsSoap()
 					.getFileTransferMethod(submittedJob.getId(), sessionCode);
@@ -305,8 +315,10 @@ public class HPCWS {
 			File privatekey = storeMetadata(ft2, tempDirJob);
 
 			try (SSHClient ssh = new SSHClient()) {
-				// TODO: MD5 fingerprints are insecure. Best to import the server's
-				// public key as already implemented in the Python Jupyter notebook.
+				// TODO: MD5 fingerprints are insecure. Best to import the
+				// server's
+				// public key as already implemented in the Python Jupyter
+				// notebook.
 				ssh.addHostKeyVerifier("70:01:c9:9a:5d:88:91:c7:1b:c0:84:d1:fa:4e:83:5c");
 				ssh.connect(ft2.getServerHostname());
 				ssh.authPublickey(ft2.getCredentials().getUsername(), privatekey.getAbsolutePath());
@@ -315,17 +327,16 @@ public class HPCWS {
 
 				for (String changedFile : changedFiles) {
 					try {
-						ssh.newSCPFileTransfer().download(
-								ft2.getSharedBasepath() + "/" + changedFile,
-								destDir);
+						ssh.newSCPFileTransfer().download(ft2.getSharedBasepath() + "/" + changedFile, destDir);
+
 						System.out.println("File " + changedFile + " downloaded.");
 					} catch (IOException x) {
 						x.printStackTrace();
 					}
 				}
 				ssh.disconnect();
-			} catch (Exception x) {
-				x.printStackTrace();
+			} catch (IOException x) {
+				throw x;
 			} finally {
 
 			}

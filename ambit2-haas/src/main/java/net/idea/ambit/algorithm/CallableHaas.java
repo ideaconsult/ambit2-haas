@@ -85,7 +85,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			x.printStackTrace();
 			System.exit(-1);
 		}
-		HPCWS hpcws = new HPCWS();
+		HPCWS hpcws = new HPCWS(resultFolder);
 		hpcws.AuthenticateUserPassword();
 		Thread.yield();
 
