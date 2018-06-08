@@ -55,6 +55,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			File resultFolder,
 			USERID token) {
 		super(token);
+		this.modelReporter = modelReporter;
 		this.resultFolder = resultFolder;
 		this.algorithm = algorithm;
 		try {
