@@ -29,7 +29,7 @@ import ambit2.model.evaluation.EvaluationStats;
  *
  * @param <Q>
  */
-public class ModelJSONReporter extends ModelURIReporter {
+public class ModelJSONReporter extends ModelURIReporterHaas {
 
 	/**
 	 * 

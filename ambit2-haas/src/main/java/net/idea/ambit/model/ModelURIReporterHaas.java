@@ -5,13 +5,13 @@ import org.restlet.Request;
 import ambit2.core.data.model.ModelQueryResults;
 import ambit2.rest.reporters.CatalogURIReporter;
 
-public class ModelURIReporter extends CatalogURIReporter<ModelQueryResults> {
+public class ModelURIReporterHaas extends CatalogURIReporter<ModelQueryResults> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7326614776271701463L;
-	public ModelURIReporter(Request baseRef) {
+	public ModelURIReporterHaas(Request baseRef) {
 		super(baseRef);
 	}
 	@Override

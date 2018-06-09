@@ -105,7 +105,7 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 			ModelFileReporter r = new ModelFileReporter(getRequest(), resultFolder, variant.getMediaType());
 			return new DownloadConvertor(r, MediaType.APPLICATION_ZIP, ".zip");
 		} else if (variant.getMediaType().equals(MediaType.TEXT_URI_LIST)) {
-			ModelURIReporter r = new ModelURIReporter(getRequest());
+			ModelURIReporterHaas r = new ModelURIReporterHaas(getRequest());
 			return new StringConvertor(r, MediaType.TEXT_PLAIN);
 
 		} else {
