@@ -55,6 +55,12 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 				return 2;
 			}
 		},
+		haasexnettest {
+			@Override
+			public int getTemplateID() {
+				return 2;
+			}
+		},
 		haasexnetstats {
 			@Override
 			public File inputFile() {
@@ -72,10 +78,14 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		public File inputFile() {
 			try {
 				return new File(this.getClass().getClassLoader()
-						.getResource(String.format("haas/input/config_template%d.json", getTemplateID())).toURI());
+						.getResource(String.format("haas/input/template%d/config.json", getTemplateID())).toURI());
 			} catch (URISyntaxException e) {
 				throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e.getMessage(), e);
 			}
+		}
+
+		public boolean submitJob() {
+			return true;
 		}
 
 		public JobSpecificationExt createJobSpec(ModelQueryResults model, HPCWS hpcws, File inputFile)
@@ -128,9 +138,12 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
 			File inputFile = heappe_alg.inputFile();
 			job = heappe_alg.createJobSpec(model, hpcws, inputFile);
-			if (job != null)
-				return hpcws.SubmitJob(job, inputFile);
-			else
+			if (job != null) {
+				if (heappe_alg.submitJob())
+					return hpcws.SubmitJob(job, inputFile);
+				else //dummy job for testing
+					return null;
+			} else
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 		} catch (IllegalArgumentException x) {
 			// i.e. not a listed algorithm

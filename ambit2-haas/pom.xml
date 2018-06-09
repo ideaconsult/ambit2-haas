@@ -22,7 +22,7 @@
 			<classifier>tests</classifier>
 			<type>jar</type>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>ambit</groupId>
 			<artifactId>ambit2-frame</artifactId>
@@ -97,9 +97,31 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
+				<custom.search>https://solr.ideaconsult.net/search/excape/</custom.search>
+				<custom.title>HaaS prototype</custom.title>
+				<custom.description>Local test instance!</custom.description>
+				<custom.logo>https://solr.ideaconsult.net/search/excape/images/excape.png</custom.logo>
+				<custom.query></custom.query>
+				<custom.structurequery></custom.structurequery>
+				<custom.color>#003B9F</custom.color>
 				<ambit.profile>excape</ambit.profile>
+				<notification.admin.email>support@ideaconsult.net</notification.admin.email>
+				<aa.enabled>false</aa.enabled>
+				<aa.db.enabled>false</aa.db.enabled>
+				<allowed.origins>*</allowed.origins>
 			</properties>
-		</profile>		
+		</profile>
+		<profile>
+			<id>heappe_httpbasic</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<aa.local.enabled>true</aa.local.enabled>
+				<aa.local.admin.name>excape</aa.local.admin.name>
+				<aa.local.admin.pass>changeit</aa.local.admin.pass>
+			</properties>
+		</profile>
 		<profile>
 			<!-- Remove JNI classes from the war; they should be copied into {tomcat}/shared/lib 
 				folder -->

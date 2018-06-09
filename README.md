@@ -84,3 +84,19 @@ Include these in your maven settings (~/.m2/settings.xml)
         <ambit.profile>excape</ambit.profile>
       </properties>
 ```      
+
+In order to enable HTTP BASIC, use also this profile  `-P heappe_httpbasic`
+
+```
+		<profile>
+			<id>heappe_httpbasic</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<aa.local.enabled>true</aa.local.enabled>
+				<aa.local.admin.name>excape</aa.local.admin.name>
+				<aa.local.admin.pass>changeit</aa.local.admin.pass>
+			</properties>
+		</profile>
+```

@@ -1,7 +1,6 @@
 <div class='helptitle' style='font-weight:bold;'>Help: Algorithm service</div>
 <div class='helpcontent'>
 What is Algorithm service<a href='#' class='chelp hwhat'>?</a> |
-What is SuperBuilder <a href='#' class='chelp hsuperbuilder'>?</a> |
 Algorithm types<a href='#' class='chelp halgtypes'>?</a> |
 <a href="http://ambit.sourceforge.net/api_algorithm.html" target=_blank title='Application Programming interface'>API</a>
 

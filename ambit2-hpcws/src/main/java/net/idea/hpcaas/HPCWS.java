@@ -140,7 +140,7 @@ public class HPCWS {
 		ArrayOfTaskSpecificationExt tasks = new ArrayOfTaskSpecificationExt();
 		tasks.getTaskSpecificationExt().add(testTask);
 		testJob.setTasks(tasks);
-		testJob.setNotificationEmail("some.email@mail.com");
+		testJob.setNotificationEmail("support@ideaconsult.net");
 		testJob.setNotifyOnAbort(false);
 		testJob.setNotifyOnFinish(false);
 		testJob.setNotifyOnStart(false);
