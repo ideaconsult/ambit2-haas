@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import cz.it4i.hpcaas.clusterinfo.ClusterInformationWs;
 import cz.it4i.hpcaas.filetransfer.ArrayOfJobFileContentExt;
@@ -41,21 +42,19 @@ public class HPCWS {
 	protected String sessionCode; // code acquired via authentication
 	protected Properties p;
 	protected File resultFolder;
+	final static Logger logger = Logger.getLogger(HPCWS.class.getName());
 
-	public HPCWS() {
+	public HPCWS() throws IOException {
 		this(getTempDir());
 	}
 
-	public HPCWS(File resultFolder) {
+	public HPCWS(File resultFolder) throws IOException {
 		super();
 		this.resultFolder = resultFolder;
 		p = new Properties();
 		try (InputStream in = HPCWS.class.getClassLoader()
 				.getResourceAsStream("net/idea/ambit/hpcws/config/haas.properties")) {
 			p.load(in);
-		} catch (IOException x) {
-			x.printStackTrace();
-			System.exit(-1);
 		}
 	}
 
@@ -68,12 +67,12 @@ public class HPCWS {
 			File inputFile = new File("test_haas.txt");
 			JobSpecificationExt testJob = hpcws.CreateJobExample("TestJob", inputFile);
 			SubmittedJobInfoExt submittedTestJob = hpcws.SubmitJob(testJob, inputFile);
-			System.out.println(String.format("\nSubmitted job ID %s.\n", submittedTestJob.getId()));
+			logger.info(String.format("\nSubmitted job ID %s.\n", submittedTestJob.getId()));
 			SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, 30000);
 			File tempDirJob = hpcws.process(job);
-			System.out.println(tempDirJob);
+			logger.fine(tempDirJob.getAbsolutePath());
 		} catch (IOException x) {
-			x.printStackTrace();
+			logger.severe(x.getMessage());
 		}
 	}
 
@@ -82,7 +81,7 @@ public class HPCWS {
 		PasswordCredentialsExt credentials = new PasswordCredentialsExt();
 		credentials.setUsername(p.getProperty("haas.user"));
 		credentials.setPassword(p.getProperty("haas.pwd"));
-		System.out.println(String.format("\nAuthenticating user [%s]...\n", credentials.getUsername()));
+		logger.fine(String.format("\nAuthenticating user [%s]...\n", credentials.getUsername()));
 		sessionCode = wsUserAndLimitationManagement.getUserAndLimitationManagementWsSoap()
 				.authenticateUserPassword(credentials);
 
@@ -152,7 +151,7 @@ public class HPCWS {
 	public SubmittedJobInfoExt SubmitJob(JobSpecificationExt testJob, File inputfile) throws IOException {
 		// create job
 		SubmittedJobInfoExt submittedTestJob = wsJobManagement.getJobManagementWsSoap().createJob(testJob, sessionCode);
-		System.out.println(String.format("\nCreated job ID %s.\n", submittedTestJob.getId()));
+		logger.info(String.format("\nCreated job ID %s.\n", submittedTestJob.getId()));
 
 		// upload input files
 		FileTransferMethodExt ft = wsFileTransfer.getFileTransferWsSoap()
@@ -196,7 +195,7 @@ public class HPCWS {
 				Thread.sleep(delay);
 				// get info for the job
 				submittedJob = checkstatus(jobId);
-				System.out.println(String.format("\nSubmitted job state %s.\n", submittedJob.getState()));
+				logger.fine(String.format("\nSubmitted job state %s.\n", submittedJob.getState()));
 				if (submittedJob.getState() == JobStateExt.SUBMITTED
 						|| submittedJob.getState() == JobStateExt.CONFIGURING
 						|| submittedJob.getState() == JobStateExt.QUEUED
@@ -205,6 +204,7 @@ public class HPCWS {
 				else
 					break;
 			} catch (Exception x) {
+				logger.severe(x.getMessage());
 				break;
 
 			} finally {
@@ -251,20 +251,20 @@ public class HPCWS {
 
 		// donwload stdouts based on the offsets
 		try {
-			System.out.println(
-					wsFileTransfer.getFileTransferWsSoap().getFileTransferMethod(jobId, sessionCode).getProtocol());
+			logger.fine(
+					wsFileTransfer.getFileTransferWsSoap().getFileTransferMethod(jobId, sessionCode).getProtocol().name());
 			ArrayOfJobFileContentExt result = wsFileTransfer.getFileTransferWsSoap()
 					.downloadPartsOfJobFilesFromCluster(jobId, aofsets, sessionCode);
 
 			for (JobFileContentExt file : result.getJobFileContentExt()) {
-				System.out.println(String.format("File: %s, %s ", file.getFileType(), file.getRelativePath()));
-				System.out.println(String.format("TaskInfoId: ", file.getSubmittedTaskInfoId()));
-				System.out.println(String.format("Offset: ", file.getOffset()));
-				System.out.println(String.format("Content: %s", file.getContent()));
+				logger.fine(String.format("File: %s, %s ", file.getFileType(), file.getRelativePath()));
+				logger.fine(String.format("TaskInfoId: ", file.getSubmittedTaskInfoId()));
+				logger.fine(String.format("Offset: ", file.getOffset()));
+				logger.fine(String.format("Content: %s", file.getContent()));
 
 			}
 		} catch (Exception x) {
-			x.printStackTrace();
+			logger.warning(x.getMessage());
 		}
 		return submittedJob;
 	}
@@ -327,11 +327,11 @@ public class HPCWS {
 
 				for (String changedFile : changedFiles) {
 					try {
-						ssh.newSCPFileTransfer().download(ft2.getSharedBasepath() + "/" + changedFile, destDir);
+						ssh.newSCPFileTransfer().download(String.format("%s/%s",ft2.getSharedBasepath(), changedFile), destDir);
 
-						System.out.println("File " + changedFile + " downloaded.");
+						logger.info(String.format("File %s downloaded.",changedFile));
 					} catch (IOException x) {
-						x.printStackTrace();
+						logger.warning(x.getMessage());
 					}
 				}
 				ssh.disconnect();
