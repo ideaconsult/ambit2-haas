@@ -92,6 +92,15 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>excape</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<ambit.profile>excape</ambit.profile>
+			</properties>
+		</profile>		
+		<profile>
 			<!-- Remove JNI classes from the war; they should be copied into {tomcat}/shared/lib 
 				folder -->
 			<id>no-jni</id>
