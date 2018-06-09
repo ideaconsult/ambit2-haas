@@ -28,6 +28,7 @@ import ambit2.rest.task.TaskResult;
 import cz.it4i.hpcaas.jobmgmt.JobSpecificationExt;
 import cz.it4i.hpcaas.jobmgmt.SubmittedJobInfoExt;
 import net.idea.ambit.model.ModelResourceHaas;
+import net.idea.ambit.model.ModelURIReporterHaas;
 import net.idea.hpcaas.HPCWS;
 import net.idea.modbcum.i.IQueryRetrieval;
 
@@ -36,7 +37,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 	protected Exception error;
 	protected UUID uuid;
 	protected ModelQueryResults model;
-	protected ModelURIReporter<IQueryRetrieval<ModelQueryResults>> modelReporter;
+	protected ModelURIReporterHaas modelReporter;
 	protected AlgorithmURIReporter algReporter;
 	protected Algorithm algorithm;
 	protected long delay;
@@ -51,7 +52,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 	}
 
 	public CallableHaas(Form form, Algorithm<String> algorithm,
-			ModelURIReporter<IQueryRetrieval<ModelQueryResults>> modelReporter, AlgorithmURIReporter algReporter,
+			ModelURIReporterHaas modelReporter, AlgorithmURIReporter algReporter,
 			File resultFolder,
 			USERID token) {
 		super(token);
