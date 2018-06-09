@@ -27,6 +27,16 @@
 	"endpoint": null,
 	"requires": null,
 	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
+},
+{
+	"id": "haasexnetstats",
+	"name": "Generates statistics of an Exnet model. Expects valid model URI",
+	"class": null,
+	"inputparam": null,
+	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
+	"endpoint": null,
+	"requires": null,
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
 }
 
 ]
