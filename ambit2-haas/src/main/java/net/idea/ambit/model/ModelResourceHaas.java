@@ -50,8 +50,9 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 		// list all available models at the moment
 		// (do we ?)
 		int modelid = -1;
-		//returning not found instead of bad request, mostly to make the rendering easier atm
-		//but could be considered security feature ;)
+		// returning not found instead of bad request, mostly to make the
+		// rendering easier atm
+		// but could be considered security feature ;)
 		if (modelkey == null)
 			throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
 		try {
@@ -72,7 +73,11 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 		model.setContent(String.format("%s/model/%s?media=%s", getRequest().getRootRef(), model.getId(),
 				MediaType.APPLICATION_ZIP.getName()));
 		model.setContentMediaType(MediaType.APPLICATION_ZIP.getName());
-		model.setAlgorithm(String.format("%s/algorithm/haasexnet", getRequest().getRootRef()));
+
+		if (modelid == 0)
+			model.setAlgorithm(String.format("%s/algorithm/haasexnettest", getRequest().getRootRef()));
+		else
+			model.setAlgorithm(String.format("%s/algorithm/haasexnet", getRequest().getRootRef()));
 		String resultFolder = ((HaaSApp) getApplication()).getdHaasHome();
 		File modelPath = new File(getModelPath(new File(resultFolder), model));
 		// throw exceptions if the path to the zip files is not found
@@ -114,15 +119,15 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 		}
 
 	}
-	
+
 	@Override
 	protected Representation post(Representation entity) throws ResourceException {
 		throw new ResourceException(Status.SERVER_ERROR_NOT_IMPLEMENTED);
 	}
+
 	@Override
 	protected Representation post(Representation entity, Variant variant) throws ResourceException {
 		throw new ResourceException(Status.SERVER_ERROR_NOT_IMPLEMENTED);
 	}
 
-	
 }

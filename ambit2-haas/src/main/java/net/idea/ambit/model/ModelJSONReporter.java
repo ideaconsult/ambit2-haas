@@ -99,7 +99,7 @@ public class ModelJSONReporter extends ModelURIReporterHaas {
 		try {
 			String uri = getURI(model);
 			parseContent(model);
-			AlgorithmFormat algFormat = AlgorithmFormat.JAVA_CLASS;
+			AlgorithmFormat algFormat = AlgorithmFormat.EXTERNAL;
 			for (AlgorithmFormat af : AlgorithmFormat.values())
 				if (af.getMediaType().equals(model.getContentMediaType())) {
 					algFormat = af;
