@@ -130,12 +130,15 @@ $(document)
 	
 </div> <!-- tabs -->
 
+<#if algid??>
+<#else>
 <div class="row" style="padding:5em;">
 <!-- help -->
 <div class='row half-bottom chelp' style='padding:0;margin:0;' id='pagehelp'></div>
 <div class='row remove-bottom chelp' style='padding:0;margin:0;font-weight:bold;' id='keytitle'></div>
 <div class='row half-bottom chelp' style='padding:0;margin:0;' id='keycontent'></div>		
 </div>
+</#if>
 
 <#include "/footer.ftl" >
 </div> <!-- container -->

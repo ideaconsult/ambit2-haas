@@ -178,9 +178,9 @@ function renderAlgorithm(entry, root, err) {
 		$("#alg_endpoint").text(val);
 		$("#predictsEndpoint").show();
 	}
-
+	
 	$("#alg_implementation").html(entry["implementationOf"]);
-
+	
 	$("#alg_implementation").prop(
 			'href',
 			'http://apps.ideaconsult.net:8080/ontology?uri='
@@ -192,6 +192,7 @@ function renderAlgorithm(entry, root, err) {
 	$("#alg_dataset").text(
 			entry["isDataProcessing"] ? "Processes a dataset"
 					: "Builds a model");
+	/*
 	$("#help_action")
 			.html(
 					entry["isDataProcessing"] ? "The result is a dataset, identified by a <a href='"
@@ -204,6 +205,7 @@ function renderAlgorithm(entry, root, err) {
 									+ "/dataset' target='dataset'>datasets</a> and <a href='"
 									+ root
 									+ "/compound' target='compound'>compounds</a>.");
+									*/
 	if (entry["requiresDataset"])
 		$("#requiresDataset").show();
 	else

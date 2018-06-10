@@ -17,8 +17,8 @@ Algorithm types<a href='#' class='chelp halgtypes'>?</a> |
     <li><a href="#hlearning">Learning algorithm</a></li>
     <li><a href="#hmodel">Models</a></li>
     <li><a href="#hwhat"> </a></li>
-    <li><a href="#hsuperbuilder"> </a></li>
-    <li><a href="#hsuperservice"> </a></li>
+    <li><a href="#hexnet"> </a></li>
+    <li><a href="#hexnetstats"> </a></li>
     <li><a href="#hendpoint"> </a></li>
     <li><a href="#himpl"> </a></li>
     <li><a href="#dtypes"> </a></li>
@@ -74,6 +74,8 @@ Algorithm types<a href='#' class='chelp halgtypes'>?</a> |
   </div>
   <div id="hwhat">
     Algorithm services accept a dataset URI in order to build a model or to process the dataset (e.g.  descriptor values).
+    </br>
+    Once a model is built, it is assigned a model URI and can be applied to datasets and compounds.
   </div>
   <div id="hlearning">
   		machine learning algorithm, e.g. <a href='${ambit_root}/algorithm?type=Regression' target=_blank>Regression</a>,
@@ -84,22 +86,19 @@ Algorithm types<a href='#' class='chelp halgtypes'>?</a> |
   Once a model is built, it is assigned a model URI (as in <a href='${ambit_root}/model?max=100' target=_blank>Models</a>) 
   and can be applied to <a href='${ambit_root}/dataset?max=100' target=_blank>datasets</a> and <a href='${ambit_root}/compound?max=100' target=_blank>compounds</a>.
   </div>
-  <div id="hsuperbuilder" >
- The SuperBuilder is a specific instance of an OpenTox algorithm service, that uses other OpenTox services to create a model or a dataset.
-The SuperBuilder uses descriptor calculation service, feature selection service and a modelling algorithm service to create prediction models. In general,  OpenTox 
-Model services execute only learning algorithms (e.g. regression or classification) and assume the input dataset contains all necessary descriptors.
-The SuperBuilder accepts URI of descriptor calculation algorithms via "feature_calculation" parameters, runs all the calculation, prepares a dataset with all descriptors and the endpoint (URI specified by "prediction_feature" parameter), and submits the final dataset to the learning algorithm (URI specified by "model_learning" parameter).
-More <a href='http://www.ideaconsult.net/web/ngn/blogs/-/blogs/opentox-model-superbuilder' class='qxternal' target='help'>details</a>.
+  <div id="hexnet" >
+<b>Exnet</b> tbd
   </div>
-  <div id="hsuperservice" >
- The <a href='${ambit_root}/algorithm/superservice' target=_blank>superservice</a> runs a model and all required dependencies (i.e. descriptor calculations). 
-  </div>
+  <div id="hexnetstats" >
+<b>Exnet stats</b> tbd
+  </div>  
+  
   <div id="hendpoint">
 	Endpoint is taken from the owl:sameAs , assigned to the dependent variable of the model. If the corresponding feature does not have assigned endpoint
 	ontology entry, this field will be empty. 
   </div>
   <div id="himpl">
-  Implementation of - as defined in Blueobelisk ontology 
+  The list of algorithms are defined in http://ambit.sourceforge.net/descriptors.owl
   </div>
    <div id="dtypes">
   <ul>

@@ -2,6 +2,7 @@ package net.idea.ambit.algorithm;
 
 import java.io.File;
 
+import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
@@ -9,6 +10,7 @@ import org.restlet.resource.ResourceException;
 import ambit2.core.data.model.Algorithm;
 import ambit2.core.data.model.AlgorithmType;
 import ambit2.core.data.model.ModelQueryResults;
+import ambit2.rest.algorithm.AlgorithmJSONReporter;
 import ambit2.rest.algorithm.AlgorithmListResource;
 import ambit2.rest.algorithm.AlgorithmURIReporter;
 import ambit2.rest.model.ModelURIReporter;
@@ -25,7 +27,11 @@ public class AlgorithmResourceHaas extends AlgorithmListResource {
 
 		return super.createCallable(form, algorithm);
 	}
-
+	
+	@Override
+	protected AlgorithmJSONReporter createAlgorithmJSONReporter(Request request, String jsonpcallback) {
+		return new AlgorithmJSONReporterHaas(request, jsonpcallback);
+	}
 	@Override
 	protected ICallableTask createCallable(Form form, Algorithm<String> algorithm,
 			ModelURIReporter<IQueryRetrieval<ModelQueryResults>> modelReporter, AlgorithmURIReporter algReporter,

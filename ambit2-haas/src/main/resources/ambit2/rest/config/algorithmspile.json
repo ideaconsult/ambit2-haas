@@ -1,54 +1,233 @@
 [
+	{
+		"id": "haasexnet",
+		"name": "Builds Exnet model on Salomon using ExCAPEDBv5 data and HeappeLoom middleware",
+		"class": null,
+		"inputparam": {
+			"network_layout_list": {
+				"type": "Feature",
+				"title": "Network layout",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"learning_rate_list": {
+				"type": "Feature",
+				"title": "Learning rate",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"momentum_list": {
+				"type": "Feature",
+				"title": "Momentum",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"dropout_keep_rate_list": {
+				"type": "Feature",
+				"title": "Dropout keep rate",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"affinity_level_list": {
+				"type": "Feature",
+				"title": "Affinity level",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"sample_index_list": {
+				"type": "Feature",
+				"title": "Samole index",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"outer_fold_index_list": {
+				"type": "Feature",
+				"title": "Outer fold index",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"inner_fold_index_list": {
+				"type": "Feature",
+				"title": "Inner fold index",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"max_epochs": {
+				"type": "Feature",
+				"title": "Max epochs",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": false,
+				"creator" : "Exnet",
+				"units" : ""
+			}
+		},
 
- {
-	"id": "haasexnet",
-	"name": "Builds Exnet model on Salomon using ExCAPEDBv5 data",
-	"class": null,
-	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
-	"endpoint": null,
-	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
-},
-
-{
-	"id": "haasexnetstats",
-	"name": "Generates statistics of an Exnet model. Expects valid model URI",
-	"class": null,
-	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
-	"endpoint": null,
-	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
-},
- {
-	"id": "haasexnettest",
-	"name": "Mockup for building Exnet model",
-	"class": null,
-	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
-	"endpoint": null,
-	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
-},
- {
-	"id": "haasexample",
-	"name": "An example job on Salomon. For testing purposes",
-	"class": null,
-	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
-	"endpoint": null,
-	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
-},
- {
-	"id": "mockup",
-	"name": "Sleeps for 'delay' milliseconds, returns 'dataset_uri' or 'model_uri', specified on input. For testing purposes",
-	"class": null,
-	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#Mockup"],
-	"endpoint": null,
-	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#mockup"
-}
+		"endpoint": null,
+		"requires": null,
+		"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels","http://www.opentox.org/algorithmTypes.owl#Learning","http://www.opentox.org/algorithmTypes.owl#Supervised","http://www.opentox.org/algorithmTypes.owl#MultipleTarget"],
+		"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas",
+		"isDataProcessing" : false,
+		"format" : "EXTERNAL"
+	},
+	{
+		"id": "haasexnetstats",
+		"name": "Generates statistics of an Exnet model. Expects a valid model URI.",
+		"class": null,
+		"inputparam": null,
+		"type": [
+			"http://www.opentox.org/algorithmTypes.owl#ExternalModels"
+		],
+		"endpoint": null,
+		"requires": null,
+		"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas",
+		"isDataProcessing" : false,
+		"format" : "EXTERNAL"
+	},
+	{
+		"id": "haasexnettest",
+		"name": "Mockup for building Exnet model. Doesn't call HeappeLoom middleware.",
+		"class": null,
+		"inputparam": {
+			"network_layout_list": {
+				"type": "Feature",
+				"title": "Network layout",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"learning_rate_list": {
+				"type": "Feature",
+				"title": "Learning rate",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"momentum_list": {
+				"type": "Feature",
+				"title": "Momentum",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"dropout_keep_rate_list": {
+				"type": "Feature",
+				"title": "Dropout keep rate",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"affinity_level_list": {
+				"type": "Feature",
+				"title": "Affinity level",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"sample_index_list": {
+				"type": "Feature",
+				"title": "Samole index",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"outer_fold_index_list": {
+				"type": "Feature",
+				"title": "Outer fold index",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"inner_fold_index_list": {
+				"type": "Feature",
+				"title": "Inner fold index",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": true,
+				"creator" : "Exnet",
+				"units" : ""
+			},
+			"max_epochs": {
+				"type": "Feature",
+				"title": "Max epochs",
+				"isNominal": false,
+				"isNumeric": true,
+				"isMultiValue": false,
+				"creator" : "Exnet",
+				"units" : ""
+			}
+		},
+		"type": [
+			"http://www.opentox.org/algorithmTypes.owl#ExternalModels","http://www.opentox.org/algorithmTypes.owl#Mockup"
+		],
+		"endpoint": null,
+		"requires": null,
+		"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas",
+		"isDataProcessing" : false,
+		"format" : "EXTERNAL"
+	},
+	{
+		"id": "haasexample",
+		"name": "HeappeLoom middleware example. For testing purposes",
+		"class": null,
+		"inputparam": null,
+		"type": [
+			"http://www.opentox.org/algorithmTypes.owl#ExternalModels"
+		],
+		"endpoint": null,
+		"requires": null,
+		"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas",
+		
+		"format" : "EXTERNAL"
+	},
+	{
+		"id": "mockup",
+		"name": "Sleeps for 'delay' milliseconds, returns 'dataset_uri' or 'model_uri', specified on input. For testing purposes",
+		"class": null,
+		"inputparam": null,
+		"type": [
+			"http://www.opentox.org/algorithmTypes.owl#Mockup"
+		],
+		"endpoint": null,
+		"requires": null,
+		"implementationof": "http://ambit.sourceforge.net/descriptors.owl#mockup"
+	}
 ]
