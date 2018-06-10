@@ -67,9 +67,6 @@ Include these in your maven settings (~/.m2/settings.xml)
         <aa.user>guest</aa.user>
         <aa.pass>guest</aa.pass>
         <aa.admin>false</aa.admin>
-        <aa.local.enabled>false</aa.local.enabled>
-        <aa.local.admin.name>admin</aa.local.admin.name>
-        <aa.local.admin.pass>changeit</aa.local.admin.pass>
         <dataset.members.prefix>false</dataset.members.prefix>
         <attach.depict>true</attach.depict>
         <attach.substance>true</attach.substance>
