@@ -3,7 +3,6 @@ package net.idea.ambit.algorithm;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +12,7 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 //import org.opentox.rest.RestException;
 import org.restlet.data.Form;
 import org.restlet.data.Status;
@@ -26,6 +26,7 @@ import ambit2.rest.task.CallableProtectedTask;
 import ambit2.rest.task.TaskResult;
 import cz.it4i.hpcaas.jobmgmt.JobSpecificationExt;
 import cz.it4i.hpcaas.jobmgmt.SubmittedJobInfoExt;
+import net.idea.ambit.algorithm.exnet.HEAPPE_ALGORITHMS;
 import net.idea.ambit.model.ModelResourceHaas;
 import net.idea.ambit.model.ModelURIReporterHaas;
 import net.idea.hpcaas.HPCWS;
@@ -41,63 +42,6 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 	protected long delay;
 	File resultFolder;
 
-	protected enum HEAPPE_ALGORITHMS {
-		haasexample {
-
-			@Override
-			public int getTemplateID() {
-				return 1;
-			}
-		},
-		haasexnet {
-			@Override
-			public int getTemplateID() {
-				return 2;
-			}
-		},
-		haasexnettest {
-			@Override
-			public int getTemplateID() {
-				return 2;
-			}
-		},
-		haasexnetstats {
-			@Override
-			public File inputFile() {
-				return null;
-			}
-
-			@Override
-			public int getTemplateID() {
-				return 3;
-			}
-		};
-
-		public abstract int getTemplateID();
-
-		public File inputFile() {
-			try {
-				return new File(this.getClass().getClassLoader()
-						.getResource(String.format("haas/input/template%d/config.json", getTemplateID())).toURI());
-			} catch (URISyntaxException e) {
-				throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e.getMessage(), e);
-			}
-		}
-
-		public boolean submitJob() {
-			return true;
-		}
-
-		public JobSpecificationExt createJobSpec(ModelQueryResults model, HPCWS hpcws, File inputFile)
-				throws ResourceException {
-			try {
-				return hpcws.CreateJob(getTemplateID(), model.getName(), "ExpTests", inputFile);
-			} catch (Exception e) {
-				throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e.getMessage(), e);
-			}
-		}
-	}
-
 	public UUID getUuid() {
 		return uuid;
 	}
@@ -107,11 +51,11 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 	}
 
 	public CallableHaas(Form form, Algorithm<String> algorithm, ModelURIReporterHaas modelReporter,
-			AlgorithmURIReporter algReporter, File resultFolder, USERID token) {
+			AlgorithmURIReporter algReporter, File resultFolder, USERID token) throws ResourceException {
 		super(token);
 		this.modelReporter = modelReporter;
 		this.resultFolder = resultFolder;
-		this.algorithm = algorithm;
+		this.algorithm = parseForm(form, algorithm);
 		try {
 			this.delay = Long.parseLong(OpenTox.params.delay.getFirstValue(form).toString());
 		} catch (Exception x) {
@@ -130,19 +74,41 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 	}
 
+	protected Algorithm parseForm(Form form, Algorithm algorithm) throws ResourceException {
+		try {
+			HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
+			return heappe_alg.parseForm(form, algorithm);
+		} catch (IllegalArgumentException x) {
+			// i.e. not a listed algorithm
+			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+		}
+	}
+
 	protected SubmittedJobInfoExt createAndSubmitJob(Algorithm algorithm, HPCWS hpcws)
 			throws ResourceException, IOException {
 		JobSpecificationExt job = null;
-
+		SubmittedJobInfoExt submittedjob = null;
 		try {
 			HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
-			File inputFile = heappe_alg.inputFile();
+			File inputFile = heappe_alg.inputFile(algorithm);
 			job = heappe_alg.createJobSpec(model, hpcws, inputFile);
 			if (job != null) {
-				if (heappe_alg.submitJob())
-					return hpcws.SubmitJob(job, inputFile);
-				else //dummy job for testing
-					return null;
+				if (heappe_alg.jobSubmission()) {
+					submittedjob = hpcws.SubmitJob(job, inputFile);
+					submittedjob.getId();
+
+				}
+				try {
+					File config = new File(String.format("%s/%d/config.json", resultFolder.getAbsoluteFile(),
+							submittedjob == null ? 0 : submittedjob.getId()));
+					if (!config.getParentFile().exists())
+						config.getParentFile().mkdirs();
+					FileUtils.copyFile(inputFile, config);
+				} catch (Exception x) {
+					logger.warning(x.getMessage());
+				}
+				return submittedjob;
+
 			} else
 				throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 		} catch (IllegalArgumentException x) {
@@ -179,12 +145,22 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 		try {
 			SubmittedJobInfoExt submittedTestJob = createAndSubmitJob(algorithm, hpcws);
+			if (submittedTestJob == null) {
+				// fake model for testing
+				model.setId(0);
+				String uri = modelReporter.getURI(model);
+				String resultsZipPath = ModelResourceHaas.getModelPath(resultFolder, model);
+				File modelfolder = new File(resultsZipPath).getParentFile();
+				if (!modelfolder.exists())
+					modelfolder.mkdirs();
+				return new TaskResult(uri);
+			}
 			logger.log(Level.INFO, String.format("Submitted job ID %s.", submittedTestJob.getId()));
 			SubmittedJobInfoExt job = hpcws.poll(submittedTestJob, delay);
 
 			switch (job.getState()) {
 			case FINISHED: {
-				// TODO: This will be finished once the problem with storing
+				// TODO: This will be modified once the problem with storing
 				// models and other
 				// intermediate files in general on the cluster is solved.
 

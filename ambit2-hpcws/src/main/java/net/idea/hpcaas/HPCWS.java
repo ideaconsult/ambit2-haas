@@ -269,7 +269,7 @@ public class HPCWS {
 		return submittedJob;
 	}
 
-	protected static File getTempDir() {
+	public static File getTempDir() {
 		return new File(String.format("%s/haas", System.getProperty("java.io.tmpdir")));
 	}
 

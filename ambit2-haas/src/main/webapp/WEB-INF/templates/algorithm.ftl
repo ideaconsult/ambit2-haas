@@ -109,13 +109,15 @@ $(document)
 			<table id='algorithm'  class='jtoxkit' cellpadding='0' border='0' width='100%' cellspacing='0' style="margin:0;padding:0;" >
 			<thead>
 			<tr>
-			<th></th>
 			<th>Name</th>
+			<th>Description</th>
+			<!--
 			<th>Endpoint <a href='#' class='chelp hendpoint'>?</a></th>
 			<th>Description <a href='#' class='chelp dtypes'>?</a></th>
 			<th>Type<a href='#' class='chelp halgtypes'>?</a></th>
 			<th>Models <a href='#' class='chelp hmodel'>?</a></th>			
 			<th>Implementation of <a href='#' class='chelp himpl'>?</a></th>
+			-->
 			</tr>
 			</thead>
 			<tbody></tbody>

@@ -1,12 +1,35 @@
-[ {
-	"id": "mockup",
-	"name": "Sleeps for 'delay' milliseconds, returns 'dataset_uri' or 'model_uri', specified on input. For testing purposes",
+[
+
+ {
+	"id": "haasexnet",
+	"name": "Builds Exnet model on Salomon using ExCAPEDBv5 data",
 	"class": null,
 	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#Mockup"],
+	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
 	"endpoint": null,
 	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#mockup"
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
+},
+
+{
+	"id": "haasexnetstats",
+	"name": "Generates statistics of an Exnet model. Expects valid model URI",
+	"class": null,
+	"inputparam": null,
+	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
+	"endpoint": null,
+	"requires": null,
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
+},
+ {
+	"id": "haasexnettest",
+	"name": "Mockup for building Exnet model",
+	"class": null,
+	"inputparam": null,
+	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
+	"endpoint": null,
+	"requires": null,
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
 },
  {
 	"id": "haasexample",
@@ -19,24 +42,13 @@
 	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
 },
  {
-	"id": "haasexnet",
-	"name": "Builds Exnet model on Salomon using ExCAPEDBv5 data",
+	"id": "mockup",
+	"name": "Sleeps for 'delay' milliseconds, returns 'dataset_uri' or 'model_uri', specified on input. For testing purposes",
 	"class": null,
 	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
+	"type": ["http://www.opentox.org/algorithmTypes.owl#Mockup"],
 	"endpoint": null,
 	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
-},
-{
-	"id": "haasexnetstats",
-	"name": "Generates statistics of an Exnet model. Expects valid model URI",
-	"class": null,
-	"inputparam": null,
-	"type": ["http://www.opentox.org/algorithmTypes.owl#ExternalModels"],
-	"endpoint": null,
-	"requires": null,
-	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas"
+	"implementationof": "http://ambit.sourceforge.net/descriptors.owl#mockup"
 }
-
 ]

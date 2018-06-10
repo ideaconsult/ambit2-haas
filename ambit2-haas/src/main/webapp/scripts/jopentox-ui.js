@@ -15,29 +15,11 @@ function defineAlgorithmTable(root, url, viscols) {
 						"bServerSide" : false,
 						"bStateSave" : false,
 						"aoColumnDefs" : [
-								{
-									"mData" : null,
-									"asSorting" : [ "asc", "desc" ],
-									"aTargets" : [ 0 ],
-									"sWidth" : "1em",
-									"bSearchable" : false,
-									"bUseRendered" : false,
-									"bVisible" : (viscols == null)
-											|| viscols[0],
-									"bSortable" : false,
-									"fnRender" : function(o, val) {
-										var sOut = '<input type="checkbox" checked="" name="alg_uri[]" title="Select '
-												+ val
-												+ '" value="'
-												+ val
-												+ '">';
-										return sOut;
-									}
-								},
+								
 								{
 									"mDataProp" : "uri",
 									"asSorting" : [ "asc", "desc" ],
-									"aTargets" : [ 1 ],
+									"aTargets" : [ 0 ],
 									"bSearchable" : true,
 									"bUseRendered" : false,
 									"bSortable" : true,
@@ -50,123 +32,22 @@ function defineAlgorithmTable(root, url, viscols) {
 												+ "' title='Click to view the algorithm at "
 												+ val
 												+ " and (optionally) launch the processing'><span class='ui-icon ui-icon-link' style='float: left; margin: .1em;' ></span>"
-												+ o.aData["name"] + "</a>";
+												+ val + "</a>";
 										return sOut;
 
 									}
 								},
 								{
-									"mDataProp" : "endpoint",
+									"mDataProp" : "name",
 									"asSorting" : [ "asc", "desc" ],
-									"aTargets" : [ 2 ],
+									"aTargets" : [1 ],
 									"bSearchable" : true,
 									"bUseRendered" : false,
 									"bVisible" : (viscols == null)
 											|| viscols[2],
 									"bSortable" : true,
 									"fnRender" : function(o, val) {
-										// create link to the ontology server
-										var p = val.indexOf("#");
-										if (p > 0)
-											return val.substring(p + 1);
-										else
 											return val;
-									}
-								},
-								{
-									"mDataProp" : "isDataProcessing",
-									"asSorting" : [ "asc", "desc" ],
-									"aTargets" : [ 3 ],
-									"bSearchable" : true,
-									"bVisible" : (viscols == null)
-											|| viscols[3],
-									"bSortable" : true,
-									"bUseRendered" : false,
-									"fnRender" : function(o, val) {
-
-										var icon = ''; // '<span class="ui-icon
-										// ui-icon-pin-s"
-										// style="float: left;
-										// margin-right: .1em;"
-										// ></span> ';
-										var sOut = icon
-												+ (val ? "<span title='Processes a dataset'>D</span> |"
-														: "<span title='Builds a model'>M</span> |");
-										sOut += o.aData["requiresDataset"] ? (icon + "<span title='Requires input dataset'>I</span> |")
-												: "";
-										sOut += o.aData["requires"] == "" ? ""
-												: icon
-														+ "<span title='Requires "
-														+ o.aData["requires"]
-														+ "'>R</span> |";
-										sOut += o.aData["isSupevised"] ? (icon + "<span title='Requires target variable'>T</span> ")
-												: "";
-										return sOut;
-									}
-								},
-								{
-									"mDataProp" : "type",
-									"asSorting" : [ "asc", "desc" ],
-									"aTargets" : [ 4 ],
-									"bSearchable" : true,
-									"bVisible" : (viscols == null)
-											|| viscols[4],
-									"bSortable" : true,
-									"bUseRendered" : false,
-
-									"fnRender" : function(o, val) {
-										var sOut = "";
-										$.each(val, function(index, value) {
-											var p = value.indexOf("#");
-											var name = value;
-											if (p > 0)
-												name = value.substring(p + 1);
-											sOut += "<a href='" + val + "'>"
-													+ name + "</a>";
-											sOut += " ";
-										});
-										return sOut;
-									}
-								},
-								{
-									"mDataProp" : "uri",
-									"asSorting" : [ "asc", "desc" ],
-									"aTargets" : [ 5 ],
-									"bSearchable" : true,
-									"bVisible" : (viscols == null)
-											|| viscols[5],
-									"bSortable" : true,
-									"bUseRendered" : false,
-									"fnRender" : function(o, val) {
-
-										return " <a href='"
-												+ root
-												+ "/model?algorithm="
-												+ encodeURIComponent(val)
-												+ "&max=100' title='Click to view models using "
-												+ val
-												+ " algorithm'><span class='ui-icon ui-icon-calculator' style='float: left; margin-right: .3em;'></span>View</a>";
-									}
-								},
-								{
-									"mDataProp" : "implementationOf",
-									"asSorting" : [ "asc", "desc" ],
-									"aTargets" : [ 6 ],
-									"bSearchable" : true,
-									"bVisible" : (viscols == null)
-											|| viscols[6],
-									"bSortable" : true,
-									"bUseRendered" : false,
-									"fnRender" : function(o, val) {
-										var p = val.indexOf("#");
-										var name = val;
-										if (p > 0)
-											name = val.substring(p + 1);
-										return "<a class='qxternal'  href='http://apps.ideaconsult.net:8080/ontology?uri="
-												+ encodeURIComponent(val)
-												+ "' target=_blank>"
-												+ name
-												+ "</a>";
 									}
 								}
 
