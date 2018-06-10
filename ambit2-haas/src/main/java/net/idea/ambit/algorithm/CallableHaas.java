@@ -55,7 +55,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		super(token);
 		this.modelReporter = modelReporter;
 		this.resultFolder = resultFolder;
-		this.algorithm = parseForm(form, algorithm);
+		this.algorithm = algorithm;
 		try {
 			this.delay = Long.parseLong(OpenTox.params.delay.getFirstValue(form).toString());
 		} catch (Exception x) {
@@ -74,15 +74,6 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 	}
 
-	protected Algorithm parseForm(Form form, Algorithm algorithm) throws ResourceException {
-		try {
-			HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
-			return heappe_alg.parseForm(form, algorithm);
-		} catch (IllegalArgumentException x) {
-			// i.e. not a listed algorithm
-			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
-		}
-	}
 
 	protected SubmittedJobInfoExt createAndSubmitJob(Algorithm algorithm, HPCWS hpcws)
 			throws ResourceException, IOException {
@@ -91,6 +82,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		try {
 			HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
 			File inputFile = heappe_alg.inputFile(algorithm);
+			//File inputFile = heappe_alg.defaultInputFile(algorithm);
 			job = heappe_alg.createJobSpec(model, hpcws, inputFile);
 			if (job != null) {
 				if (heappe_alg.jobSubmission()) {
@@ -114,6 +106,8 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		} catch (IllegalArgumentException x) {
 			// i.e. not a listed algorithm
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+		} catch (IOException x) {
+			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,x.getMessage(),x);
 		} catch (ResourceException x) {
 			throw x;
 		}
@@ -210,6 +204,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		} catch (ResourceException x) {
 			throw x;
 		} catch (Exception x) {
+			logger.severe(x.getMessage());
 			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY, x.getMessage());
 
 		}

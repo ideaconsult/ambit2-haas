@@ -15,6 +15,7 @@ import ambit2.rest.algorithm.AlgorithmListResource;
 import ambit2.rest.algorithm.AlgorithmURIReporter;
 import ambit2.rest.model.ModelURIReporter;
 import ambit2.rest.task.CallableMockup;
+import net.idea.ambit.algorithm.exnet.HEAPPE_ALGORITHMS;
 import net.idea.ambit.app.HaaSApp;
 import net.idea.ambit.model.ModelURIReporterHaas;
 import net.idea.modbcum.i.IQueryRetrieval;
@@ -27,26 +28,37 @@ public class AlgorithmResourceHaas extends AlgorithmListResource {
 
 		return super.createCallable(form, algorithm);
 	}
-	
+
 	@Override
 	protected AlgorithmJSONReporter createAlgorithmJSONReporter(Request request, String jsonpcallback) {
 		return new AlgorithmJSONReporterHaas(request, jsonpcallback);
+	}
+
+	protected Algorithm parseForm(Form form, Algorithm algorithm) throws ResourceException {
+		try {
+			HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
+			return heappe_alg.parseForm(form, algorithm);
+		} catch (IllegalArgumentException x) {
+			// i.e. not a listed algorithm
+			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+		}
 	}
 	@Override
 	protected ICallableTask createCallable(Form form, Algorithm<String> algorithm,
 			ModelURIReporter<IQueryRetrieval<ModelQueryResults>> modelReporter, AlgorithmURIReporter algReporter,
 			Object token) throws ResourceException {
 
-		if (algorithm.hasType(AlgorithmType.Mockup)) {
-			return new CallableMockup(form, token);
-
-		} else if (algorithm.hasType(AlgorithmType.ExternalModels)) {
+		if (algorithm.hasType(AlgorithmType.ExternalModels)) {
 			String tmpFolder = ((HaaSApp) getApplication()).getdHaasHome();
-			//this is a hack to use different reporter class, which is not descending from  ambit2.rest.model.ModelURIReporter
+			// this is a hack to use different reporter class, which is not
+			// descending from ambit2.rest.model.ModelURIReporter
 			ModelURIReporterHaas modelReporterHaas = new ModelURIReporterHaas(getRequest());
+			algorithm = parseForm(form, algorithm);
 			return new CallableHaas(form, algorithm, modelReporterHaas, algReporter, new File(tmpFolder), token);
-		}
-		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+		} else if (algorithm.hasType(AlgorithmType.Mockup)) {
+			return new CallableMockup(form, token);
+		} else
+			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 	}
 
 }
