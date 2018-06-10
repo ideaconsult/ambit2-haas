@@ -23,7 +23,7 @@ public class AlgorithmJSONReporterHaas extends AlgorithmJSONReporter {
 	protected void item2json(Algorithm algorithm, String uri) throws IOException {
 		super.item2json(algorithm, uri);
 		try {
-			output.write(",inputparam : null");
+			output.write(", \"inputparam\": null");
 		} catch (IOException x) {
 			Context.getCurrentLogger().severe(x.getMessage());
 		}
