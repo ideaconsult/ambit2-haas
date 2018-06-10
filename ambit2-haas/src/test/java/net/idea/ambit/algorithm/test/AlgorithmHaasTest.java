@@ -22,6 +22,7 @@ public class AlgorithmHaasTest extends ResourceTest {
 		webform.add("learning_rate_list", "1.0");
 		webform.add("network_layout_list", "200,200");
 		webform.add("network_layout_list", "2000,2000");
+		webform.add("network_layout_list", "");
 		Reference url = testAsyncTask(getTestURI(),
 				webform, Status.SUCCESS_OK, null);
 		String expected = String.format("http://localhost:%d/model/0", port);

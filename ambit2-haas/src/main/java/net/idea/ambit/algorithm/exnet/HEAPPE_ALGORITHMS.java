@@ -51,7 +51,7 @@ public enum HEAPPE_ALGORITHMS {
 				while (keys.hasNext()) {
 					String key = keys.next();
 					String value = form.getFirstValue(key);
-					if (value != null)
+					if (value != null && !"".equals(value))
 						try {
 							String methodName = "get" + WordUtils.capitalize(key);
 							Method method = exnetParams.getClass().getMethod(methodName);
@@ -71,9 +71,17 @@ public enum HEAPPE_ALGORITHMS {
 								method.invoke(exnetParams, new Object[] { dvalues });
 							} else if (v instanceof Integer[][]) {
 								String[] values = form.getValuesArray(key);
-								Integer[][] nets = new Integer[values.length][];
+								int n = 0;
+								for (String vv : values)
+									if (vv != null && !"".equals(vv))
+										n++;
+								Integer[][] nets = new Integer[n][];
+								n = 0;
 								for (int i = 0; i < values.length; i++)
-									nets[i] = parseIntArrayValue(values[i]);
+									if (values[i] != null && !"".equals(values[i])) {
+										nets[n] = parseIntArrayValue(values[i]);
+										n++;
+									}
 								method = exnetParams.getClass().getMethod(methodName, nets.getClass());
 								method.invoke(exnetParams, new Object[] { nets });
 							} // else
@@ -109,7 +117,8 @@ public enum HEAPPE_ALGORITHMS {
 						try {
 							ExnetParam exnetParams = (ExnetParam) ((Parameter) prm).getValue();
 							ObjectMapper mapper = new ObjectMapper();
-							File tempConfig = File.createTempFile(HPCWS.getTempDir().getAbsolutePath()+"/config", ".json");
+							File tempConfig = File.createTempFile(HPCWS.getTempDir().getAbsolutePath() + "/config",
+									".json");
 							mapper.writeValue(tempConfig, exnetParams);
 							return tempConfig;
 						} catch (Exception x) {
@@ -130,14 +139,17 @@ public enum HEAPPE_ALGORITHMS {
 		public Algorithm parseForm(Form form, Algorithm algorithm) throws ResourceException {
 			return haasexnet.parseForm(form, algorithm);
 		}
+
 		@Override
 		public File inputFile(Algorithm algorithm) {
 			return haasexnet.inputFile(algorithm);
 		}
+
 		@Override
 		public File defaultInputFile(Algorithm algorithm) {
 			return haasexnet.defaultInputFile(algorithm);
 		}
+
 		@Override
 		public boolean jobSubmission() {
 			return false;

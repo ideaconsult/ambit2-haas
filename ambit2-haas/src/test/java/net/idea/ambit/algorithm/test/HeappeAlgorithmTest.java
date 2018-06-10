@@ -26,6 +26,7 @@ public class HeappeAlgorithmTest {
 		form.add("affinity_level_list", "5, 6");
 		form.add("network_layout_list", "200,200");
 		form.add("network_layout_list", "1000,1000");
+		form.add("network_layout_list", "");
 		algorithm = exnet.parseForm(form, algorithm);
 
 		Assert.assertNotNull(algorithm.getParameters());
