@@ -98,7 +98,7 @@
 			</activation>
 			<properties>
 				<custom.search>https://solr.ideaconsult.net/search/excape/</custom.search>
-				<custom.title>HaaS prototype</custom.title>
+				<custom.title>HeappeLoom REST wrapper</custom.title>
 				<custom.description>Local test instance!</custom.description>
 				<custom.logo>https://solr.ideaconsult.net/search/excape/images/excape.png</custom.logo>
 				<custom.query></custom.query>
