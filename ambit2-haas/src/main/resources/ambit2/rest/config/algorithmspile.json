@@ -98,7 +98,6 @@
 		"id": "haasexnetstats",
 		"name": "Generates statistics of an Exnet model. Expects a valid model URI.",
 		"class": null,
-		"inputparam": null,
 		"type": [
 			"http://www.opentox.org/algorithmTypes.owl#ExternalModels"
 		],
@@ -106,7 +105,18 @@
 		"requires": null,
 		"implementationof": "http://ambit.sourceforge.net/descriptors.owl#haas",
 		"isDataProcessing" : false,
-		"format" : "EXTERNAL"
+		"format" : "EXTERNAL",
+		"inputparam": {
+			"model_uri": {
+				"type": "Feature",
+				"title": "Exnet model URI",
+				"isNominal": false,
+				"isNumeric": false,
+				"isMultiValue": false,
+				"creator" : "Exnet",
+				"units" : ""
+			}
+		}
 	},
 	{
 		"id": "haasexnettest",

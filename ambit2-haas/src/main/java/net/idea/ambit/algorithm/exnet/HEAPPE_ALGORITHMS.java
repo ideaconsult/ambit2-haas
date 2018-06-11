@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ambit2.core.data.model.Algorithm;
 import ambit2.core.data.model.ModelQueryResults;
 import ambit2.core.data.model.Parameter;
+import ambit2.rest.OpenTox;
 import cz.it4i.hpcaas.jobmgmt.JobSpecificationExt;
 import net.idea.hpcaas.HPCWS;
 
@@ -167,6 +168,20 @@ public enum HEAPPE_ALGORITHMS {
 			return 3;
 		}
 
+		@Override
+		public Algorithm parseForm(Form form, Algorithm algorithm) throws ResourceException {
+			String model_uri = form.getFirstValue(OpenTox.params.model_uri.name());
+			if (model_uri == null || "".equals(model_uri)) throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+			List<Parameter> prms = new ArrayList<Parameter>();
+			prms.add(new Parameter(OpenTox.params.model_uri.name(), model_uri));
+			algorithm.setParameters(prms);
+			return algorithm;
+		}
+		@Override
+		public boolean jobSubmission() {
+			// for testing purposes untill the file sharing is resolved
+			return false;
+		}
 	};
 
 	public abstract int getTemplateID();

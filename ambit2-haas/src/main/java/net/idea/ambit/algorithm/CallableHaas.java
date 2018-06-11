@@ -20,6 +20,7 @@ import org.restlet.resource.ResourceException;
 
 import ambit2.core.data.model.Algorithm;
 import ambit2.core.data.model.ModelQueryResults;
+import ambit2.core.data.model.Parameter;
 import ambit2.rest.OpenTox;
 import ambit2.rest.algorithm.AlgorithmURIReporter;
 import ambit2.rest.task.CallableProtectedTask;
@@ -74,7 +75,6 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 	}
 
-
 	protected SubmittedJobInfoExt createAndSubmitJob(Algorithm algorithm, HPCWS hpcws)
 			throws ResourceException, IOException {
 		JobSpecificationExt job = null;
@@ -82,7 +82,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		try {
 			HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
 			File inputFile = heappe_alg.inputFile(algorithm);
-			//File inputFile = heappe_alg.defaultInputFile(algorithm);
+			// File inputFile = heappe_alg.defaultInputFile(algorithm);
 			job = heappe_alg.createJobSpec(model, hpcws, inputFile);
 			if (job != null) {
 				if (heappe_alg.jobSubmission()) {
@@ -107,9 +107,36 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			// i.e. not a listed algorithm
 			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
 		} catch (IOException x) {
-			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,x.getMessage(),x);
+			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY, x.getMessage(), x);
 		} catch (ResourceException x) {
 			throw x;
+		}
+
+	}
+
+	protected void updateModel(ModelQueryResults model, Algorithm algorithm, SubmittedJobInfoExt submittedJob) {
+		HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
+		switch (heappe_alg) {
+		case haasexnetstats: {
+			if (algorithm.getParameters() != null)
+				for (Object prm : algorithm.getParameters())
+					if ((prm instanceof Parameter)
+							&& (((Parameter) prm).getName() == OpenTox.params.model_uri.name())) {
+						String[] path = ((Parameter)prm).getValue().toString().split("/");
+						model.setId(Integer.parseInt(path[path.length-1]));
+						//model.setEvaluation(evaluation);
+						break;
+					}
+
+			break;
+		}
+		default: {
+			if (submittedJob == null) {
+				model.setId(0);
+			} else {
+				model.setId(((Long) submittedJob.getId()).intValue());
+			}
+		}
 		}
 
 	}
@@ -141,7 +168,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			SubmittedJobInfoExt submittedTestJob = createAndSubmitJob(algorithm, hpcws);
 			if (submittedTestJob == null) {
 				// fake model for testing
-				model.setId(0);
+				updateModel(model, algorithm, submittedTestJob);
 				String uri = modelReporter.getURI(model);
 				String resultsZipPath = ModelResourceHaas.getModelPath(resultFolder, model);
 				File modelfolder = new File(resultsZipPath).getParentFile();
@@ -157,8 +184,8 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 				// TODO: This will be modified once the problem with storing
 				// models and other
 				// intermediate files in general on the cluster is solved.
+				updateModel(model, algorithm, submittedTestJob);
 
-				model.setId(((Long) submittedTestJob.getId()).intValue());
 				File file = hpcws.process(job);
 				model.setContent(file.getAbsolutePath());
 				try {
