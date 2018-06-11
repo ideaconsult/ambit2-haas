@@ -30,22 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetResourceUsageReportForJobResponse }
-     * 
-     */
-    public GetResourceUsageReportForJobResponse createGetResourceUsageReportForJobResponse() {
-        return new GetResourceUsageReportForJobResponse();
-    }
-
-    /**
-     * Create an instance of {@link SubmittedJobInfoUsageReportExt }
-     * 
-     */
-    public SubmittedJobInfoUsageReportExt createSubmittedJobInfoUsageReportExt() {
-        return new SubmittedJobInfoUsageReportExt();
-    }
-
-    /**
      * Create an instance of {@link GetUserGroupResourceUsageReportResponse }
      * 
      */
@@ -59,6 +43,22 @@ public class ObjectFactory {
      */
     public UserGroupResourceUsageReportExt createUserGroupResourceUsageReportExt() {
         return new UserGroupResourceUsageReportExt();
+    }
+
+    /**
+     * Create an instance of {@link GetResourceUsageReportForJobResponse }
+     * 
+     */
+    public GetResourceUsageReportForJobResponse createGetResourceUsageReportForJobResponse() {
+        return new GetResourceUsageReportForJobResponse();
+    }
+
+    /**
+     * Create an instance of {@link SubmittedJobInfoUsageReportExt }
+     * 
+     */
+    public SubmittedJobInfoUsageReportExt createSubmittedJobInfoUsageReportExt() {
+        return new SubmittedJobInfoUsageReportExt();
     }
 
     /**
@@ -86,14 +86,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetResourceUsageReportForJob }
-     * 
-     */
-    public GetResourceUsageReportForJob createGetResourceUsageReportForJob() {
-        return new GetResourceUsageReportForJob();
-    }
-
-    /**
      * Create an instance of {@link GetUserResourceUsageReportResponse }
      * 
      */
@@ -107,6 +99,14 @@ public class ObjectFactory {
      */
     public UserResourceUsageReportExt createUserResourceUsageReportExt() {
         return new UserResourceUsageReportExt();
+    }
+
+    /**
+     * Create an instance of {@link GetResourceUsageReportForJob }
+     * 
+     */
+    public GetResourceUsageReportForJob createGetResourceUsageReportForJob() {
+        return new GetResourceUsageReportForJob();
     }
 
     /**

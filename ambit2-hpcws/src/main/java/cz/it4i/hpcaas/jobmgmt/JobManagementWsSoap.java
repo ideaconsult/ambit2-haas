@@ -119,4 +119,38 @@ public interface JobManagementWsSoap {
         @WebParam(name = "sessionCode", targetNamespace = "http://hpcaas.it4i.cz/")
         String sessionCode);
 
+    /**
+     * 
+     * @param submittedJobInfoId
+     * @param path
+     * @param sessionCode
+     */
+    @WebMethod(operationName = "CopyJobDataToTemp", action = "http://hpcaas.it4i.cz/CopyJobDataToTemp")
+    @RequestWrapper(localName = "CopyJobDataToTemp", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobmgmt.CopyJobDataToTemp")
+    @ResponseWrapper(localName = "CopyJobDataToTempResponse", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobmgmt.CopyJobDataToTempResponse")
+    public void copyJobDataToTemp(
+        @WebParam(name = "submittedJobInfoId", targetNamespace = "http://hpcaas.it4i.cz/")
+        long submittedJobInfoId,
+        @WebParam(name = "sessionCode", targetNamespace = "http://hpcaas.it4i.cz/")
+        String sessionCode,
+        @WebParam(name = "path", targetNamespace = "http://hpcaas.it4i.cz/")
+        String path);
+
+    /**
+     * 
+     * @param sessionCode
+     * @param createdJobInfoId
+     * @param tempSessionCode
+     */
+    @WebMethod(operationName = "CopyJobDataFromTemp", action = "http://hpcaas.it4i.cz/CopyJobDataFromTemp")
+    @RequestWrapper(localName = "CopyJobDataFromTemp", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobmgmt.CopyJobDataFromTemp")
+    @ResponseWrapper(localName = "CopyJobDataFromTempResponse", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobmgmt.CopyJobDataFromTempResponse")
+    public void copyJobDataFromTemp(
+        @WebParam(name = "createdJobInfoId", targetNamespace = "http://hpcaas.it4i.cz/")
+        long createdJobInfoId,
+        @WebParam(name = "sessionCode", targetNamespace = "http://hpcaas.it4i.cz/")
+        String sessionCode,
+        @WebParam(name = "tempSessionCode", targetNamespace = "http://hpcaas.it4i.cz/")
+        String tempSessionCode);
+
 }

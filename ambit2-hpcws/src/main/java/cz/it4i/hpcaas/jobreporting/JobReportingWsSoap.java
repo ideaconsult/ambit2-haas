@@ -40,23 +40,6 @@ public interface JobReportingWsSoap {
 
     /**
      * 
-     * @param jobId
-     * @param sessionCode
-     * @return
-     *     returns cz.it4i.hpcaas.jobreporting.SubmittedJobInfoUsageReportExt
-     */
-    @WebMethod(operationName = "GetResourceUsageReportForJob", action = "http://hpcaas.it4i.cz/GetResourceUsageReportForJob")
-    @WebResult(name = "GetResourceUsageReportForJobResult", targetNamespace = "http://hpcaas.it4i.cz/")
-    @RequestWrapper(localName = "GetResourceUsageReportForJob", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobreporting.GetResourceUsageReportForJob")
-    @ResponseWrapper(localName = "GetResourceUsageReportForJobResponse", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobreporting.GetResourceUsageReportForJobResponse")
-    public SubmittedJobInfoUsageReportExt getResourceUsageReportForJob(
-        @WebParam(name = "jobId", targetNamespace = "http://hpcaas.it4i.cz/")
-        long jobId,
-        @WebParam(name = "sessionCode", targetNamespace = "http://hpcaas.it4i.cz/")
-        String sessionCode);
-
-    /**
-     * 
      * @param sessionCode
      * @param startTime
      * @param endTime
@@ -98,6 +81,23 @@ public interface JobReportingWsSoap {
         XMLGregorianCalendar startTime,
         @WebParam(name = "endTime", targetNamespace = "http://hpcaas.it4i.cz/")
         XMLGregorianCalendar endTime,
+        @WebParam(name = "sessionCode", targetNamespace = "http://hpcaas.it4i.cz/")
+        String sessionCode);
+
+    /**
+     * 
+     * @param jobId
+     * @param sessionCode
+     * @return
+     *     returns cz.it4i.hpcaas.jobreporting.SubmittedJobInfoUsageReportExt
+     */
+    @WebMethod(operationName = "GetResourceUsageReportForJob", action = "http://hpcaas.it4i.cz/GetResourceUsageReportForJob")
+    @WebResult(name = "GetResourceUsageReportForJobResult", targetNamespace = "http://hpcaas.it4i.cz/")
+    @RequestWrapper(localName = "GetResourceUsageReportForJob", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobreporting.GetResourceUsageReportForJob")
+    @ResponseWrapper(localName = "GetResourceUsageReportForJobResponse", targetNamespace = "http://hpcaas.it4i.cz/", className = "cz.it4i.hpcaas.jobreporting.GetResourceUsageReportForJobResponse")
+    public SubmittedJobInfoUsageReportExt getResourceUsageReportForJob(
+        @WebParam(name = "jobId", targetNamespace = "http://hpcaas.it4i.cz/")
+        long jobId,
         @WebParam(name = "sessionCode", targetNamespace = "http://hpcaas.it4i.cz/")
         String sessionCode);
 

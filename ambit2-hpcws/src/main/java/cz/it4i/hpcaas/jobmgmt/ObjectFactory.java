@@ -54,11 +54,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CreateJobResponse }
+     * Create an instance of {@link CopyJobDataFromTemp }
      * 
      */
-    public CreateJobResponse createCreateJobResponse() {
-        return new CreateJobResponse();
+    public CopyJobDataFromTemp createCopyJobDataFromTemp() {
+        return new CopyJobDataFromTemp();
     }
 
     /**
@@ -70,11 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SubmitJobResponse }
+     * Create an instance of {@link CopyJobDataToTemp }
      * 
      */
-    public SubmitJobResponse createSubmitJobResponse() {
-        return new SubmitJobResponse();
+    public CopyJobDataToTemp createCopyJobDataToTemp() {
+        return new CopyJobDataToTemp();
     }
 
     /**
@@ -91,6 +91,38 @@ public class ObjectFactory {
      */
     public ArrayOfSubmittedJobInfoExt createArrayOfSubmittedJobInfoExt() {
         return new ArrayOfSubmittedJobInfoExt();
+    }
+
+    /**
+     * Create an instance of {@link ListJobsForCurrentUser }
+     * 
+     */
+    public ListJobsForCurrentUser createListJobsForCurrentUser() {
+        return new ListJobsForCurrentUser();
+    }
+
+    /**
+     * Create an instance of {@link CopyJobDataToTempResponse }
+     * 
+     */
+    public CopyJobDataToTempResponse createCopyJobDataToTempResponse() {
+        return new CopyJobDataToTempResponse();
+    }
+
+    /**
+     * Create an instance of {@link CreateJobResponse }
+     * 
+     */
+    public CreateJobResponse createCreateJobResponse() {
+        return new CreateJobResponse();
+    }
+
+    /**
+     * Create an instance of {@link SubmitJobResponse }
+     * 
+     */
+    public SubmitJobResponse createSubmitJobResponse() {
+        return new SubmitJobResponse();
     }
 
     /**
@@ -142,11 +174,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ListJobsForCurrentUser }
+     * Create an instance of {@link CopyJobDataFromTempResponse }
      * 
      */
-    public ListJobsForCurrentUser createListJobsForCurrentUser() {
-        return new ListJobsForCurrentUser();
+    public CopyJobDataFromTempResponse createCopyJobDataFromTempResponse() {
+        return new CopyJobDataFromTempResponse();
     }
 
     /**
