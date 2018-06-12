@@ -1,5 +1,7 @@
 package net.idea.ambit.algorithm.exnet;
 
+import java.util.Arrays;
+
 public class ExnetParam {
 
 
@@ -83,7 +85,7 @@ public class ExnetParam {
 	Integer[] sample_index_list = new Integer[] {};
 	Integer[] outer_fold_index_list = new Integer[] {};
 	Integer[] inner_fold_index_list = new Integer[] {};
-	Integer max_epochs;
+	Integer max_epochs=1;
 
 	public Integer getMax_epochs() {
 		return max_epochs;
@@ -92,5 +94,12 @@ public class ExnetParam {
 	public void setMax_epochs(Integer max_epochs) {
 		this.max_epochs = max_epochs;
 	}
-
+	@Override
+	public int hashCode() {
+		return getMax_epochs().hashCode() + Arrays.hashCode(learning_rate_list) + Arrays.hashCode(momentum_list) + 
+				Arrays.hashCode(network_layout_list) + Arrays.hashCode(dropout_keep_rate_list) + 
+				Arrays.hashCode(input_dropout_keep_rate_list) + Arrays.hashCode(affinity_level_list) +
+				Arrays.hashCode(sample_index_list) + Arrays.hashCode(outer_fold_index_list) +
+				Arrays.hashCode(inner_fold_index_list) ;
+	}
 }

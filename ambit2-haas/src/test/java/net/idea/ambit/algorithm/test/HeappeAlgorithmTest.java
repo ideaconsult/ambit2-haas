@@ -52,4 +52,12 @@ public class HeappeAlgorithmTest {
 		File file = HEAPPE_ALGORITHMS.haasexnet.inputFile(algorithm);
 		System.out.println(file.getAbsolutePath());
 	}
+	@Test
+	public void testHashcode() {
+		ExnetParam p1 = new ExnetParam();
+		ExnetParam p2 = new ExnetParam();
+		Assert.assertEquals(p1.hashCode(), p2.hashCode());
+		p2.setLearning_rate_list(new Double[] {0.1});
+		Assert.assertNotSame(p1.hashCode(), p2.hashCode());
+	}
 }
