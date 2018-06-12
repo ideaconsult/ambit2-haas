@@ -91,7 +91,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 				}
 				try {
-					File config = new File(String.format("%s/%d/config.json", resultFolder.getAbsoluteFile(),
+					File config = new File(String.format("%s/jobs/%d/config.json", resultFolder.getAbsoluteFile(),
 							submittedjob == null ? 0 : submittedjob.getId()));
 					if (!config.getParentFile().exists())
 						config.getParentFile().mkdirs();
@@ -154,9 +154,9 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 		HPCWS hpcws = null;
 		try {
-			// hpcws = new HPCWS(resultFolder);
+			hpcws = new HPCWS(resultFolder);
 			// temp folder if not specified
-			hpcws = new HPCWS();
+			//hpcws = new HPCWS();
 			hpcws.AuthenticateUserPassword();
 		} catch (Exception x) {
 			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY, x.getMessage(), x);

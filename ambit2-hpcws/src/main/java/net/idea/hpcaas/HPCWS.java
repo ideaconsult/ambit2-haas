@@ -114,7 +114,7 @@ public class HPCWS {
 		ArrayOfCommandTemplateParameterValueExt a = new ArrayOfCommandTemplateParameterValueExt();
 		CommandTemplateParameterValueExt pv = new CommandTemplateParameterValueExt();
 		pv.setCommandParameterIdentifier("configFile");
-		pv.setParameterValue("config.json");
+		pv.setParameterValue(inputfile.getName());
 		a.getCommandTemplateParameterValueExt().add(pv);
 		testTask.setTemplateParameterValues(a);
 		testTask.setClusterTaskSubdirectory(null);
@@ -274,7 +274,7 @@ public class HPCWS {
 	}
 
 	protected File getJobFolder(long jobId) {
-		return new File(String.format("%s/%d", resultFolder.getAbsoluteFile(), jobId));
+		return new File(String.format("%s/jobs/%d", resultFolder.getAbsoluteFile(), jobId));
 		// return new File(String.format("%s/%d", getTempDir(), jobId));
 	}
 

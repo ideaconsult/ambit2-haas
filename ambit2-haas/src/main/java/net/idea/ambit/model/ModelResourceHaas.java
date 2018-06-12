@@ -90,7 +90,7 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 	}
 
 	public static String getModelPath(File resultFolder, ModelQueryResults model) {
-		return String.format("%s/%d/job_results.zip", resultFolder.getAbsoluteFile(), model.getId());
+		return String.format("%s/models/%d/job_results.zip", resultFolder.getAbsoluteFile(), model.getId());
 	}
 
 	@Override

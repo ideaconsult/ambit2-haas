@@ -49,12 +49,12 @@ public class AlgorithmResourceHaas extends AlgorithmListResource {
 			Object token) throws ResourceException {
 
 		if (algorithm.hasType(AlgorithmType.ExternalModels)) {
-			String tmpFolder = ((HaaSApp) getApplication()).getdHaasHome();
+			String resultsFolder = String.format("%s",((HaaSApp) getApplication()).getdHaasHome());
 			// this is a hack to use different reporter class, which is not
 			// descending from ambit2.rest.model.ModelURIReporter
 			ModelURIReporterHaas modelReporterHaas = new ModelURIReporterHaas(getRequest());
 			algorithm = parseForm(form, algorithm);
-			return new CallableHaas(form, algorithm, modelReporterHaas, algReporter, new File(tmpFolder), token);
+			return new CallableHaas(form, algorithm, modelReporterHaas, algReporter, new File(resultsFolder), token);
 		} else if (algorithm.hasType(AlgorithmType.Mockup)) {
 			return new CallableMockup(form, token);
 		} else
