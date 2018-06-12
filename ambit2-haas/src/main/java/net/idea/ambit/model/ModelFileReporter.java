@@ -30,7 +30,7 @@ public class ModelFileReporter extends ListReporter<ModelQueryResults, FileRepre
 	@Override
 	public void processItem(ModelQueryResults model, FileRepresentation output) {
 		try {
-			File file = new File(ModelResourceHaas.getModelPath(new File(resultFolder), model));
+			File file = new File(ModelResourceHaas.getModelPathZip(new File(resultFolder), model));
 			setOutput(new FileRepresentation(file, mediaType));
 
 		} catch (Exception x) {

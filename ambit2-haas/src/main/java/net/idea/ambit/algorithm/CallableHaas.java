@@ -1,8 +1,11 @@
 package net.idea.ambit.algorithm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,8 +16,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.xerces.impl.dv.util.Base64;
 //import org.opentox.rest.RestException;
 import org.restlet.data.Form;
+import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 
@@ -28,6 +33,8 @@ import ambit2.rest.task.TaskResult;
 import cz.it4i.hpcaas.jobmgmt.JobSpecificationExt;
 import cz.it4i.hpcaas.jobmgmt.SubmittedJobInfoExt;
 import net.idea.ambit.algorithm.exnet.HEAPPE_ALGORITHMS;
+import net.idea.ambit.model.ModelHaas;
+import net.idea.ambit.model.ModelJSONReporter;
 import net.idea.ambit.model.ModelResourceHaas;
 import net.idea.ambit.model.ModelURIReporterHaas;
 import net.idea.hpcaas.HPCWS;
@@ -38,6 +45,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 	protected UUID uuid;
 	protected ModelQueryResults model;
 	protected ModelURIReporterHaas modelReporter;
+	protected ModelJSONReporter modeljsonreporter;
 	protected AlgorithmURIReporter algReporter;
 	protected Algorithm algorithm;
 	protected long delay;
@@ -62,6 +70,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		} catch (Exception x) {
 			this.delay = 30000;
 		}
+		this.modeljsonreporter = new ModelJSONReporter(modelReporter.getResourceRef(), null);
 		model = new ModelQueryResults();
 		model.setAlgorithm(algorithm.getName());
 		try {
@@ -114,17 +123,23 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 	}
 
-	protected void updateModel(ModelQueryResults model, Algorithm algorithm, SubmittedJobInfoExt submittedJob) {
+	protected void updateModel(ModelQueryResults model, Algorithm algorithm, SubmittedJobInfoExt submittedJob,
+			String sessioncode) {
+		model.setTrainingInstances("ExCAPEDBv5");
+		model.setStars(1);
+		model.setCreator("Heappe");
+
 		HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
+
 		switch (heappe_alg) {
 		case haasexnetstats: {
 			if (algorithm.getParameters() != null)
 				for (Object prm : algorithm.getParameters())
 					if ((prm instanceof Parameter)
 							&& (((Parameter) prm).getName() == OpenTox.params.model_uri.name())) {
-						String[] path = ((Parameter)prm).getValue().toString().split("/");
-						model.setId(Integer.parseInt(path[path.length-1]));
-						//model.setEvaluation(evaluation);
+						String[] path = ((Parameter) prm).getValue().toString().split("/");
+						model.setId(Integer.parseInt(path[path.length - 1]));
+						// model.setEvaluation(evaluation);
 						break;
 					}
 
@@ -136,9 +151,43 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			} else {
 				model.setId(((Long) submittedJob.getId()).intValue());
 			}
+
 		}
 		}
 
+		model.setName(String.format("%s %d", heappe_alg.name(), model.getId()));
+		model.setAlgorithm(String.format("%s/algorithm/%s", modelReporter.getResourceRef(), heappe_alg.name()));
+		// model.setContent(String.format("%s/model/%s?media=%s",
+		// modelReporter.getResourceRef(), model.getId(),
+		// MediaType.APPLICATION_ZIP.getName()));
+		try {
+			Form form = serializeModel(model, sessioncode,algorithm.getId());
+			model.setContent(form.getWebRepresentation().getText());
+			model.setContentMediaType(MediaType.APPLICATION_JAVA.getName());
+		} catch (Exception x) {
+			model.setContent(Integer.toString(model.getId()));
+			model.setContentMediaType(MediaType.TEXT_PLAIN.getName());
+		}
+		
+	}
+
+	private Form serializeModel(ModelQueryResults model, String sessioncode, String algorithm) throws IOException {
+		
+		ModelHaas mh= new ModelHaas();
+		mh.setJobid(model.getId());
+		mh.setAlgorithm(algorithm);
+		mh.setSessioncode(sessioncode);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		// serialize model
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(mh);
+		oos.flush();
+		oos.close();
+
+		byte[] content = out.toByteArray();
+		Form form = new Form();
+		form.add("model", Base64.encode(content));
+		return form;
 	}
 
 	@Override
@@ -156,7 +205,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		try {
 			hpcws = new HPCWS(resultFolder);
 			// temp folder if not specified
-			//hpcws = new HPCWS();
+			// hpcws = new HPCWS();
 			hpcws.AuthenticateUserPassword();
 		} catch (Exception x) {
 			throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY, x.getMessage(), x);
@@ -168,12 +217,17 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			SubmittedJobInfoExt submittedTestJob = createAndSubmitJob(algorithm, hpcws);
 			if (submittedTestJob == null) {
 				// fake model for testing
-				updateModel(model, algorithm, submittedTestJob);
+				updateModel(model, algorithm, submittedTestJob, hpcws.getSessionCode());
 				String uri = modelReporter.getURI(model);
-				String resultsZipPath = ModelResourceHaas.getModelPath(resultFolder, model);
-				File modelfolder = new File(resultsZipPath).getParentFile();
+				String resultsJsonPath = ModelResourceHaas.getModelPathJson(resultFolder, model);
+				File modelfolder = new File(resultsJsonPath).getParentFile();
 				if (!modelfolder.exists())
 					modelfolder.mkdirs();
+				try {
+					saveModel(model, new File(resultsJsonPath));
+				} catch (IOException x) {
+					logger.log(Level.WARNING, String.format("Error writing model.json job %d", 0));
+				}
 				return new TaskResult(uri);
 			}
 			logger.log(Level.INFO, String.format("Submitted job ID %s.", submittedTestJob.getId()));
@@ -184,7 +238,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 				// TODO: This will be modified once the problem with storing
 				// models and other
 				// intermediate files in general on the cluster is solved.
-				updateModel(model, algorithm, submittedTestJob);
+				updateModel(model, algorithm, submittedTestJob, hpcws.getSessionCode());
 
 				File file = hpcws.process(job);
 				model.setContent(file.getAbsolutePath());
@@ -199,16 +253,24 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 					// and the model resource will serve files under /model/{id}
 					// ideally the model URI should be independent of job id,
 					// but will do for now
-					String resultsZipPath = ModelResourceHaas.getModelPath(resultFolder, model);
+					String resultsZipPath = ModelResourceHaas.getModelPathZip(resultFolder, model);
+
 					File modelfolder = new File(resultsZipPath).getParentFile();
+					if (!modelfolder.exists())
+						modelfolder.mkdirs();
+					try {
+						String resultsJsonPath = ModelResourceHaas.getModelPathJson(resultFolder, model);
+						saveModel(model, new File(resultsJsonPath));
+					} catch (IOException x) {
+						logger.log(Level.WARNING, String.format("Error writing model.json job %d", job.getId()));
+					}
 					try {
 						if (!modelfolder.exists())
 							modelfolder.mkdirs();
 						zipFiles(resultsDir, resultsZipPath);
 					} catch (IOException x) {
-						throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Error creating zip archive", x);
+						logger.log(Level.WARNING, String.format("Error writing zip archive job %d", job.getId()));
 					}
-
 					return new TaskResult(uri);
 				} catch (Exception x) {
 					throw new ResourceException(Status.SERVER_ERROR_INTERNAL, x.getMessage(), x);
@@ -220,6 +282,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 						String.format(String.format("Job cancelled %s", job.getId())));
 			}
 			case FAILED: {
+				// to do download stdin/stderr even if failed
 				throw new ResourceException(Status.SERVER_ERROR_BAD_GATEWAY,
 						String.format(String.format("Job failed %s", job.getId())));
 			}
@@ -236,6 +299,17 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 		}
 
+	}
+
+	protected void saveModel(ModelQueryResults model, File json) throws IOException {
+		ModelJSONReporter jsonreporter = new ModelJSONReporter(modelReporter.getResourceRef(), null);
+		try (FileWriter output = new FileWriter(json)) {
+			jsonreporter.setOutput(output);
+			jsonreporter.processItem(model, output);
+		} catch (Exception x) {
+		} finally {
+
+		}
 	}
 
 	private static void zipFiles(File sourceDir, String zipFilePath) throws IOException {

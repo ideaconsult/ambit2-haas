@@ -79,18 +79,25 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 		else
 			model.setAlgorithm(String.format("%s/algorithm/haasexnet", getRequest().getRootRef()));
 		String resultFolder = ((HaaSApp) getApplication()).getdHaasHome();
-		File modelPath = new File(getModelPath(new File(resultFolder), model));
+		File modelPathJson = new File(getModelPathJson(new File(resultFolder), model));
+		File modelPathZip = new File(getModelPathZip(new File(resultFolder), model));
 		// throw exceptions if the path to the zip files is not found
-		if (!modelPath.exists())
+		if (modelPathZip.exists() || modelPathJson.exists()) {
+			ArrayList<ModelQueryResults> models = new ArrayList<ModelQueryResults>();
+			models.add(model);
+			return models.iterator();
+
+		} else
 			throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
 
-		ArrayList<ModelQueryResults> models = new ArrayList<ModelQueryResults>();
-		models.add(model);
-		return models.iterator();
 	}
 
-	public static String getModelPath(File resultFolder, ModelQueryResults model) {
+	public static String getModelPathZip(File resultFolder, ModelQueryResults model) {
 		return String.format("%s/models/%d/job_results.zip", resultFolder.getAbsoluteFile(), model.getId());
+	}
+
+	public static String getModelPathJson(File resultFolder, ModelQueryResults model) {
+		return String.format("%s/models/%d/model.json", resultFolder.getAbsoluteFile(), model.getId());
 	}
 
 	@Override
@@ -103,7 +110,7 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 			String jsonpcallback = params.getFirstValue("jsonp");
 			if (jsonpcallback == null)
 				jsonpcallback = params.getFirstValue("callback");
-			ModelJSONReporter r = new ModelJSONReporter(getRequest(), jsonpcallback);
+			ModelJSONReporter r = new ModelJSONReporter(getRequest().getRootRef(), jsonpcallback);
 			return new StringConvertor(r, MediaType.APPLICATION_JAVASCRIPT);
 		} else if (variant.getMediaType().equals(MediaType.APPLICATION_ZIP)) {
 			String resultFolder = ((HaaSApp) getApplication()).getdHaasHome();
@@ -114,7 +121,7 @@ public class ModelResourceHaas extends CatalogResource<ModelQueryResults> {
 			return new StringConvertor(r, MediaType.TEXT_PLAIN);
 
 		} else {
-			ModelJSONReporter r = new ModelJSONReporter(getRequest(), null);
+			ModelJSONReporter r = new ModelJSONReporter(getRequest().getRootRef(), null);
 			return new StringConvertor(r, MediaType.APPLICATION_JSON);
 		}
 

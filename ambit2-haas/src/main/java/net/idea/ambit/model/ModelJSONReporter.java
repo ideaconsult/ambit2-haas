@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.restlet.Request;
 import org.restlet.data.Form;
+import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.engine.util.Base64;
 import org.restlet.resource.ResourceException;
@@ -21,6 +22,7 @@ import ambit2.core.data.model.IEvaluation.EVStatsType;
 import ambit2.core.data.model.IEvaluation.EVType;
 import ambit2.core.data.model.ModelQueryResults;
 import ambit2.model.evaluation.EvaluationStats;
+
 
 /**
  * JSON
@@ -45,8 +47,9 @@ public class ModelJSONReporter extends ModelURIReporterHaas {
 			return name();
 		}
 	}
+	
 
-	public ModelJSONReporter(Request baseRef, String jsonpcallback) {
+	public ModelJSONReporter(Reference baseRef, String jsonpcallback) {
 		super(baseRef);
 		this.jsonpCallback = JSONUtils.jsonSanitizeCallback(jsonpcallback);
 	}
@@ -137,6 +140,7 @@ public class ModelJSONReporter extends ModelURIReporterHaas {
 					d = ",";
 				}
 			}
+			
 			getOutput().write(String.format("\n{" + "\n\"%s\":\"%s\"," + // uri
 					"\n\"%s\":%d," + // id
 					"\n\"%s\":\"%s\"," + // title

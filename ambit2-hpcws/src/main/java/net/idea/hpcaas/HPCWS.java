@@ -40,6 +40,14 @@ public class HPCWS {
 	protected JobReportingWs wsJobReporting = new JobReportingWs();
 	protected UserAndLimitationManagementWs wsUserAndLimitationManagement = new UserAndLimitationManagementWs();
 	protected String sessionCode; // code acquired via authentication
+	public String getSessionCode() {
+		return sessionCode;
+	}
+
+	public void setSessionCode(String sessionCode) {
+		this.sessionCode = sessionCode;
+	}
+
 	protected Properties p;
 	protected File resultFolder;
 	final static Logger logger = Logger.getLogger(HPCWS.class.getName());
