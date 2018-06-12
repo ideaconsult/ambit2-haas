@@ -165,7 +165,7 @@ public enum HEAPPE_ALGORITHMS {
 
 		@Override
 		public int getTemplateID() {
-			return 3;
+			return 1;
 		}
 
 		@Override

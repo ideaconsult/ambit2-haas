@@ -43,4 +43,18 @@ public class AlgorithmHaasTest extends ResourceTest {
 		Assert.assertEquals(expected, url.toString());
 
 	}
+	
+	@Test
+	public void testHaasExample() throws Exception {
+		Form webform = new Form();
+		webform.add("learning_rate_list", "0.5");
+		webform.add("network_layout_list", "2048,2048");
+		String exneturi = String.format("http://localhost:%d%s/haasexample", port,
+				MLResources.algorithm);
+		Reference url = testAsyncTask(exneturi,
+				webform, Status.SUCCESS_OK, null);
+		String expected = String.format("http://localhost:%d/model/0", port);
+		Assert.assertEquals(expected, url.toString());
+
+	}
 }

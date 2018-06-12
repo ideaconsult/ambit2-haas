@@ -10,11 +10,11 @@ public class ModelHaas implements Serializable {
 	public void setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
 	}
-	protected int jobid;
-	public int getJobid() {
+	protected Long jobid;
+	public Long getJobid() {
 		return jobid;
 	}
-	public void setJobid(int jobid) {
+	public void setJobid(Long jobid) {
 		this.jobid = jobid;
 	}
 	public String getSessioncode() {

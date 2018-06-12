@@ -19,9 +19,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 //import org.opentox.rest.RestException;
 import org.restlet.data.Form;
-import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ambit2.core.data.model.Algorithm;
 import ambit2.core.data.model.ModelQueryResults;
@@ -125,9 +126,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 
 	protected void updateModel(ModelQueryResults model, Algorithm algorithm, SubmittedJobInfoExt submittedJob,
 			String sessioncode) {
-		model.setTrainingInstances("ExCAPEDBv5");
-		model.setStars(1);
-		model.setCreator("Heappe");
+
 
 		HEAPPE_ALGORITHMS heappe_alg = HEAPPE_ALGORITHMS.valueOf(algorithm.getId());
 
@@ -155,11 +154,14 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		}
 		}
 
-		model.setName(String.format("%s %d", heappe_alg.name(), model.getId()));
+		/*
+		 * 		model.setTrainingInstances("ExCAPEDBv5");
+		model.setStars(1);
+		model.setCreator("Heappe");
+		 * 		model.setName(String.format("%s %d", heappe_alg.name(), model.getId()));
 		model.setAlgorithm(String.format("%s/algorithm/%s", modelReporter.getResourceRef(), heappe_alg.name()));
-		// model.setContent(String.format("%s/model/%s?media=%s",
-		// modelReporter.getResourceRef(), model.getId(),
-		// MediaType.APPLICATION_ZIP.getName()));
+
+		 //too complex, replaced by writing ModelHaas as json
 		try {
 			Form form = serializeModel(model, sessioncode,algorithm.getId());
 			model.setContent(form.getWebRepresentation().getText());
@@ -168,15 +170,20 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 			model.setContent(Integer.toString(model.getId()));
 			model.setContentMediaType(MediaType.TEXT_PLAIN.getName());
 		}
+		*/
 		
 	}
-
-	private Form serializeModel(ModelQueryResults model, String sessioncode, String algorithm) throws IOException {
-		
+	private ModelHaas getModelHaas(Long jobid, String sessioncode, String algorithm) {
 		ModelHaas mh= new ModelHaas();
-		mh.setJobid(model.getId());
+		mh.setJobid(jobid);
 		mh.setAlgorithm(algorithm);
 		mh.setSessioncode(sessioncode);
+		return mh;
+	}
+	/*
+	private Form serializeModel(ModelQueryResults model, String sessioncode, String algorithm) throws IOException {
+		
+		ModelHaas mh= getModelHaas(model.getId(), sessioncode, algorithm);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		// serialize model
 		ObjectOutputStream oos = new ObjectOutputStream(out);
@@ -189,7 +196,7 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		form.add("model", Base64.encode(content));
 		return form;
 	}
-
+	*/
 	@Override
 	public TaskResult doCall() throws Exception {
 
@@ -224,7 +231,8 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 				if (!modelfolder.exists())
 					modelfolder.mkdirs();
 				try {
-					saveModel(model, new File(resultsJsonPath));
+					ModelHaas mh = getModelHaas(0L, hpcws.getSessionCode(), algorithm.getId());
+					saveModel(mh, new File(resultsJsonPath));
 				} catch (IOException x) {
 					logger.log(Level.WARNING, String.format("Error writing model.json job %d", 0));
 				}
@@ -260,7 +268,9 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 						modelfolder.mkdirs();
 					try {
 						String resultsJsonPath = ModelResourceHaas.getModelPathJson(resultFolder, model);
-						saveModel(model, new File(resultsJsonPath));
+						//saveModel(model, new File(resultsJsonPath));
+						ModelHaas mh = getModelHaas(submittedTestJob.getId(), hpcws.getSessionCode(), algorithm.getId());
+						saveModel(mh, new File(resultsJsonPath));
 					} catch (IOException x) {
 						logger.log(Level.WARNING, String.format("Error writing model.json job %d", job.getId()));
 					}
@@ -300,7 +310,10 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 		}
 
 	}
-
+	protected void saveModel(ModelHaas model, File json) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(json, model);
+	}
 	protected void saveModel(ModelQueryResults model, File json) throws IOException {
 		ModelJSONReporter jsonreporter = new ModelJSONReporter(modelReporter.getResourceRef(), null);
 		try (FileWriter output = new FileWriter(json)) {
