@@ -248,13 +248,13 @@ public class CallableHaas<USERID> extends CallableProtectedTask<USERID> {
 				// intermediate files in general on the cluster is solved.
 				updateModel(model, algorithm, submittedTestJob, hpcws.getSessionCode());
 
-				File file = hpcws.process(job);
-				model.setContent(file.getAbsolutePath());
+
 				try {
 					String uri = modelReporter.getURI(model);
 					// For now, we'll just serve the output files as a ZIP
 					// archive.
 					File resultsDir = hpcws.process(job);
+					model.setContent(resultsDir.getAbsolutePath());
 					// name has to be job specific, otherwise will overwrite if
 					// >1 job done
 					// we return model URI, not path to files.
