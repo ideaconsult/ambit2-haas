@@ -35,15 +35,7 @@
 						    "type": "string",
 						    "paramType": "query",
 						    "allowMultiple": false,
-						    "defaultValue": "${ambit_root}/algorithm/toxtreecramer"						    
-						},    
-						{
-						    "name": "dataset",
-						    "description": "Find all models with training dataset URI. See Dataset service for valid Dataset URIs",
-						    "required": false,
-						    "type": "string",
-						    "paramType": "query",
-						    "allowMultiple": false					    
+						    "defaultValue": "${ambit_root}/algorithm/haasexnet"						    
 						},    						
                        <#include "/apidocs/parameters_page.ftl" >                                   
                     ],
@@ -197,133 +189,9 @@
                     ]
                 }		                
 		    ]
-		},
-		{
-		    "path": "/model/{id}/independent",
-		    "operations": [
-		        {
-		   		"method": "GET",
-		   		"summary": "List of independent variables",
-	            "notes": "Returns list of features used as independent variables <a href='http://opentox.org/dev/apis/api-1.2/Model' target='opentox'>OpenTox Model API</a>",
-	            "type": "Feature",
-	            "nickname": "getModelIndependentVariables",		   		
-	            <#include "/apidocs/authz.ftl" >
-	            "parameters": [
-	               			{
-							    "name": "id",
-							    "description": "Model ID",
-							    "required": true,
-							    "type": "int",
-							    "paramType": "path",
-							    "allowMultiple": false,
-							    "defaultValue": "1",
-							    "minimum": "1"
-							}
-	            ],
-	            "responseMessages": [
-	         		         		{
-	        		        	        "code": 200,
-	        		        	        "message": "Independent variables found"
-	        		        		},		                                 
-	        		                {
-	        		                    "code": 404,
-	        		                    "message": "Independent variables  not found"
-	        		                },
-	        		                {
-	        		                    "code": 400,
-	        		                    "message": "Invalid model identifier"
-	        		                },		                
-	        						<#include "/apidocs/error_aa.ftl" >,
-	        						<#include "/apidocs/error_500.ftl" >	                                 
-	            ]                     
-		        }
-		        
-		    ]
-		},
-		{
-		    "path": "/model/{id}/dependent",
-		    "operations": [
-		        {
-		   		"method": "GET",
-		   		"summary": "List of dependent variables",
-	            "notes": "Returns list of features used as dependent variables <a href='http://opentox.org/dev/apis/api-1.2/Model' target='opentox'>OpenTox Model API</a>",
-	            "type": "Feature",
-	            "nickname": "getModelDependentVariables",		   		
-	            <#include "/apidocs/authz.ftl" >
-	            "parameters": [
-	               			{
-							    "name": "id",
-							    "description": "Model ID",
-							    "required": true,
-							    "type": "int",
-							    "paramType": "path",
-							    "allowMultiple": false,
-							    "defaultValue": "1",
-							    "minimum": "1"
-							}
-	            ],
-	            "responseMessages": [
-	         		         		{
-	        		        	        "code": 200,
-	        		        	        "message": "Dependent variables found"
-	        		        		},		                                 
-	        		                {
-	        		                    "code": 404,
-	        		                    "message": "Dependent variables  not found"
-	        		                },
-	        		                {
-	        		                    "code": 400,
-	        		                    "message": "Invalid model identifier"
-	        		                },		                
-	        						<#include "/apidocs/error_aa.ftl" >,
-	        						<#include "/apidocs/error_500.ftl" >	                                 
-	            ]                     
-		        }
-		        
-		    ]
-		},
-		{
-		    "path": "/model/{id}/predicted",
-		    "operations": [
-		        {
-		   		"method": "GET",
-		   		"summary": "List of predicted features",
-	            "notes": "Returns list of features used as predicted variables <a href='http://opentox.org/dev/apis/api-1.2/Model' target='opentox'>OpenTox Model API</a>",
-	            "type": "Feature",
-	            "nickname": "getModelPredictedVariables",		   		
-	            <#include "/apidocs/authz.ftl" >
-	            "parameters": [
-	               			{
-							    "name": "id",
-							    "description": "Model ID",
-							    "required": true,
-							    "type": "int",
-							    "paramType": "path",
-							    "allowMultiple": false,
-							    "defaultValue": "1",
-							    "minimum": "1"
-							}
-	            ],
-	            "responseMessages": [
-	         		         		{
-	        		        	        "code": 200,
-	        		        	        "message": "Predicted variables found"
-	        		        		},		                                 
-	        		                {
-	        		                    "code": 404,
-	        		                    "message": "Predicted variables  not found"
-	        		                },
-	        		                {
-	        		                    "code": 400,
-	        		                    "message": "Invalid model identifier"
-	        		                },		                
-	        						<#include "/apidocs/error_aa.ftl" >,
-	        						<#include "/apidocs/error_500.ftl" >	                                 
-	            ]                     
-		        }
-		        
-		    ]
-		}		
+		}
+
+			
 		
     ],
     "models" : {
