@@ -22,8 +22,8 @@ Include these in your maven settings (~/.m2/settings.xml)
       <properties>
         <haas.user>yourhaaspwd</haas.user>
         <haas.pwd>yourhaasuser</haas.pwd>
-        <haas.knownhosts>d://bin/putty/known_hosts</haas.knownhosts>
-        <haas.keyfile>d://bin/putty/salomon_id_rsa.ppk</haas.keyfile>
+        <haas.knownhosts>known_hosts</haas.knownhosts>
+        <haas.keyfile>salomon_id_rsa.ppk</haas.keyfile>
         <HAAS_HOME>folder_for_tmp_files</HAAS_HOME>
       </properties>
     </profile>   
@@ -45,11 +45,7 @@ Include these in your maven settings (~/.m2/settings.xml)
         <custom.query></custom.query>
         <custom.structurequery></custom.structurequery>
         <custom.color>#003B9F</custom.color>
-        <!--
-      	http://localhost:9090/ambit2/proxy
-      	<custom.color>#729203</custom.color>
-      	-->
-        <google.analytics>UA-8771500-6</google.analytics>
+        <google.analytics></google.analytics>
         <ambit.db>ambit-test</ambit.db>
         <ambit.db.host>localhost</ambit.db.host>
         <ambit.db.user.root.password></ambit.db.user.root.password>
@@ -57,13 +53,8 @@ Include these in your maven settings (~/.m2/settings.xml)
         <ambit.db.user.test.password>guest</ambit.db.user.test.password>
         <rdf.writer>stax</rdf.writer>
         <dataset.members.prefix>false</dataset.members.prefix>
-        <ambit.db.create.allow>true</ambit.db.create.allow>
-        <service.ontology>http://apps.ideaconsult.net:8080/ontology</service.ontology>
-        <OBABEL_HOME>C:/Program Files (x86)/OpenBabel-2.3.2</OBABEL_HOME>
         <aa.enabled>false</aa.enabled>
         <ambit.report.level>debug</ambit.report.level>
-        <aa.opensso>http://opensso.in-silico.ch/opensso/identity</aa.opensso>
-        <aa.policy>http://opensso.in-silico.ch/Pol/opensso-pol</aa.policy>
         <aa.user>guest</aa.user>
         <aa.pass>guest</aa.pass>
         <aa.admin>false</aa.admin>
