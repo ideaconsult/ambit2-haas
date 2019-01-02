@@ -1,6 +1,6 @@
 
-ambit2-haas : The Ambit REST wrapper for It4I middleware
-ambit2-hpcws: WSDL generated classes for It4I services
+- ambit2-haas : The Ambit REST wrapper for It4I middleware
+- ambit2-hpcws: WSDL generated classes for It4I services
 
 # HAAS wrapper 
 
