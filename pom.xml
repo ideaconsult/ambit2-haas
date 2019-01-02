@@ -74,17 +74,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.nd4j</groupId>
-				<artifactId>nd4j-native-platform</artifactId>
-				<version>${nd4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.nd4j</groupId>
-				<artifactId>nd4j-cuda-7.5-platform</artifactId>
-				<version>${nd4j.version}</version>
-			</dependency>
-
-			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
@@ -239,14 +228,7 @@
 		<shadedClassifier>bin</shadedClassifier>
 
 		<java.version>1.8</java.version>
-		<nd4j.version>0.9.1</nd4j.version>
-		<dl4j.version>0.9.1</dl4j.version>
-		<datavec.version>0.9.1</datavec.version>
-		<arbiter.version>0.9.1</arbiter.version>
-		<rl4j.version>0.9.1</rl4j.version>
-		<scala.binary.version>2.11</scala.binary.version>
 		<guava.version>19.0</guava.version>
-		<jfreechart.version>1.0.13</jfreechart.version>
 		<maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
 		<exec-maven-plugin.version>1.4.0</exec-maven-plugin.version>
 
