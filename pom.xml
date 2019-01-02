@@ -232,8 +232,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.version>4.8.1</junit.version>
-		<ambit.version>3.3.0-SNAPSHOT</ambit.version>
-		<cdk.version>1.5.13</cdk.version>
+		<ambit.version>4.0.0-SNAPSHOT</ambit.version>
+		<cdk.version>2.1.1</cdk.version>
 
 		<nd4j.backend>nd4j-native-platform</nd4j.backend>
 		<shadedClassifier>bin</shadedClassifier>
